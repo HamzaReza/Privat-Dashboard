@@ -1,26 +1,244 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary brand color - Gold */
+  --primary: #D4AF37;
+  --primary-light: #E8C468;
+  --primary-dark: #B8941F;
+
+  /* Backgrounds */
+  --background: #FAF8F3;
+  --surface: #FFFFFF;
+  --surface-alt: #F3F0E8;
+  --surface-elevated: #FFFFFF;
+
+  /* Text */
+  --foreground: #1A1A1A;
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-tertiary: #9B9B9B;
+  --text-inverse: #FFFFFF;
+
+  /* Borders */
+  --border: #E0DDD5;
+  --border-light: #EFEEE9;
+
+  /* Status */
+  --success: #4CAF50;
+  --success-bg: #F0FAF0;
+  --warning: #FF9800;
+  --warning-bg: #FFF8EE;
+  --error: #F44336;
+  --error-bg: #FFF0EF;
+  --info: #2196F3;
+  --info-bg: #EEF6FF;
+
+  /* UI Accents */
+  --icon: #4A4A4A;
+  --tab-default: #9B9B9B;
+  --tab-selected: #D4AF37;
+
+  /* Glass & overlay */
+  --glass-overlay: rgba(28, 28, 30, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.12);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.16);
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --shadow-color-medium: rgba(0, 0, 0, 0.12);
+  --shadow-color-strong: rgba(0, 0, 0, 0.2);
+
+  /* Sidebar */
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: #E0DDD5;
+}
+
+[data-theme="dark"] {
+  /* Primary brand color - Gold (unchanged) */
+  --primary: #D4AF37;
+  --primary-light: #E8C468;
+  --primary-dark: #B8941F;
+
+  /* Backgrounds */
+  --background: #0A0A0A;
+  --surface: #111111;
+  --surface-alt: #1A1A1A;
+  --surface-elevated: #1E1E1E;
+
+  /* Text */
+  --foreground: #F5F5F5;
+  --text-primary: #F5F5F5;
+  --text-secondary: #A0A0A0;
+  --text-tertiary: #6B6B6B;
+  --text-inverse: #1A1A1A;
+
+  /* Borders */
+  --border: #2A2A2A;
+  --border-light: #222222;
+
+  /* Status */
+  --success: #4CAF50;
+  --success-bg: #0D1F0E;
+  --warning: #FF9800;
+  --warning-bg: #1F160A;
+  --error: #F44336;
+  --error-bg: #1F0C0B;
+  --info: #2196F3;
+  --info-bg: #0A1420;
+
+  /* UI Accents */
+  --icon: #B0B0B0;
+  --tab-default: #6B6B6B;
+  --tab-selected: #D4AF37;
+
+  /* Glass & overlay */
+  --glass-overlay: rgba(28, 28, 30, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.6);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-color-medium: rgba(0, 0, 0, 0.4);
+  --shadow-color-strong: rgba(0, 0, 0, 0.6);
+
+  /* Sidebar */
+  --sidebar-bg: #111111;
+  --sidebar-border: #2A2A2A;
 }
 
 @theme inline {
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-surface-elevated: var(--surface-elevated);
+
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-inverse: var(--text-inverse);
+
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  --color-icon: var(--icon);
+  --color-tab-default: var(--tab-default);
+  --color-tab-selected: var(--tab-selected);
+
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --font-sans: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Selection */
+::selection {
+  background: var(--primary);
+  color: #000;
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* React DatePicker overrides */
+.react-datepicker {
+  font-family: var(--font-sans) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  background: var(--surface) !important;
+  box-shadow: var(--shadow-lg) !important;
+  overflow: hidden;
+}
+
+.react-datepicker__header {
+  background: var(--surface-alt) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__day {
+  color: var(--text-primary) !important;
+  border-radius: 8px !important;
+}
+
+.react-datepicker__day:hover {
+  background: var(--surface-alt) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--in-range {
+  background: var(--primary) !important;
+  color: #000 !important;
+  font-weight: 600;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background: var(--primary-light) !important;
+  color: #000 !important;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: var(--text-secondary) !important;
 }
