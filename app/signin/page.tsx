@@ -82,8 +82,10 @@ export default function SignInPage() {
 
       // Regular users go to their detail page
       router.replace(`/dashboard/users/${user.id}`);
-    } catch {
-      setError("An unexpected error occurred. Please try again.");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
