@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import * as FaIcons from "react-icons/fa";
 import { ServiceCategory } from "@/types/category";
 import { CategoryModal } from "@/components/dashboard/CategoryModal";
 import {
@@ -10,9 +12,22 @@ import {
   RiAddLine,
   RiEditLine,
   RiDeleteBinLine,
-  RiEyeLine,
-  RiEyeOffLine,
 } from "react-icons/ri";
+
+// Converts React Native FontAwesome5 kebab-case names (e.g. "paint-roller")
+// to react-icons PascalCase names (e.g. "FaPaintRoller")
+function toFaKey(name: string): string {
+  if (/^Fa[A-Z]/.test(name)) return name; // already "FaPascalCase"
+  return "Fa" + name.split("-").map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join("");
+}
+
+function FAIcon({ name, size = 24 }: { name: string; size?: number }) {
+  const Icon = FaIcons[toFaKey(name) as keyof typeof FaIcons] as
+    | React.ElementType
+    | undefined;
+  if (!Icon) return <span style={{ fontSize: size }}>{name}</span>;
+  return <Icon size={size} />;
+}
 
 export function CategoriesTab() {
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
@@ -55,26 +70,6 @@ export function CategoriesTab() {
     } finally {
       setActionLoading(null);
       setDeleteConfirm(null);
-    }
-  };
-
-  const handleToggleHidden = async (cat: ServiceCategory) => {
-    const id = cat.id;
-    setActionLoading(id + "-hide");
-    try {
-      const res = await fetch(`/api/categories/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hidden: !cat.hidden }),
-      });
-      if (!res.ok) throw new Error("Update failed");
-      setCategories((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, hidden: !c.hidden } : c)),
-      );
-    } catch {
-      fetchCategories();
-    } finally {
-      setActionLoading(null);
     }
   };
 
@@ -153,7 +148,6 @@ export function CategoriesTab() {
               onDelete={() => setDeleteConfirm(cat.id)}
               onDeleteConfirm={() => handleDelete(cat.id)}
               onDeleteCancel={() => setDeleteConfirm(null)}
-              onToggleHidden={() => handleToggleHidden(cat)}
             />
           ))}
         </div>
@@ -180,7 +174,6 @@ interface CategoryCardProps {
   onDelete: () => void;
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
-  onToggleHidden: () => void;
 }
 
 function CategoryCard({
@@ -191,41 +184,24 @@ function CategoryCard({
   onDelete,
   onDeleteConfirm,
   onDeleteCancel,
-  onToggleHidden,
 }: CategoryCardProps) {
   const isDeleting = actionLoading === category.id + "-delete";
-  const isHiding = actionLoading === category.id + "-hide";
   const confirmingDelete = deleteConfirm === category.id;
 
   return (
     <div
-      className={`group relative rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden transition-all duration-200 hover:border-[var(--primary)]/50 hover:shadow-md ${
-        category.hidden ? "opacity-50" : ""
-      }`}
+      className="group relative rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden transition-all duration-200 hover:border-[var(--primary)]/50 hover:shadow-md"
       style={{ boxShadow: "var(--shadow-sm)" }}
     >
       {/* Image */}
       <div className="relative aspect-square bg-[var(--surface-alt)] overflow-hidden">
-        {category.image_uri ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={category.image_uri}
-            alt={category.name_en}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-4xl">
-            {category.icon}
-          </div>
-        )}
-
-        {/* Hidden badge */}
-        {category.hidden && (
-          <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/70 text-white text-xs font-medium">
-            <RiEyeOffLine size={11} />
-            Hidden
-          </div>
-        )}
+        <Image
+          src={category.image_uri}
+          alt={category.name_en}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16.666vw"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
 
         {/* Hover action buttons */}
         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
@@ -273,19 +249,6 @@ function CategoryCard({
                 icon={<RiDeleteBinLine size={15} />}
                 danger
               />
-              <ActionBtn
-                onClick={onToggleHidden}
-                title={category.hidden ? "Show" : "Hide"}
-                icon={
-                  isHiding ? (
-                    <RiLoader4Line className="animate-spin" size={15} />
-                  ) : category.hidden ? (
-                    <RiEyeLine size={15} />
-                  ) : (
-                    <RiEyeOffLine size={15} />
-                  )
-                }
-              />
             </>
           )}
         </div>
@@ -294,7 +257,9 @@ function CategoryCard({
       {/* Info */}
       <div className="p-3">
         <div className="flex items-center gap-1.5 mb-0.5">
-          <span className="text-base leading-none">{category.icon}</span>
+          <span className="text-base leading-none text-[var(--primary)]">
+            <FAIcon name={category.icon} size={16} />
+          </span>
           <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
             {category.name_en}
           </p>

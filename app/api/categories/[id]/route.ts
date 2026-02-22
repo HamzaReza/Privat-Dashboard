@@ -51,28 +51,6 @@ export async function PUT(req: Request, { params }: { params: Params }) {
   }
 }
 
-// PATCH: partial update — used for hidden toggle
-export async function PATCH(req: Request, { params }: { params: Params }) {
-  const { id } = await params;
-  try {
-    const body: Partial<ServiceCategory> = await req.json();
-
-    const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("service_categories")
-      .update(body)
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return NextResponse.json(data);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "Internal error";
-    return NextResponse.json({ error: msg }, { status: 500 });
-  }
-}
-
 export async function DELETE(_req: Request, { params }: { params: Params }) {
   const { id } = await params;
   try {

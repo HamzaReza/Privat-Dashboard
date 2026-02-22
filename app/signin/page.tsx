@@ -51,7 +51,7 @@ export default function SignInPage() {
     checkSession();
   }, [router]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setLoading(true);

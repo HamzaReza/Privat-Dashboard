@@ -1,8 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import * as FaIcons from "react-icons/fa";
 import { ServiceCategory, CategoryFormData } from "@/types/category";
 import { RiCloseLine, RiLoader4Line, RiImageLine } from "react-icons/ri";
+
+// Converts stored name (e.g. "Hammer", "hammer", "paint-roller") to react-icons key (e.g. "FaHammer", "FaPaintRoller")
+function toFaKey(name: string): string {
+  if (!name) return "";
+  if (/^Fa[A-Z]/.test(name)) return name; // already "FaPascalCase"
+  return "Fa" + name.split("-").map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()).join("");
+}
 
 interface CategoryModalProps {
   mode: "add" | "edit";
@@ -11,8 +19,7 @@ interface CategoryModalProps {
   onSaved: () => void;
 }
 
-const EMPTY_FORM: CategoryFormData = {
-  id: "",
+const EMPTY_FORM: Omit<CategoryFormData, "id"> = {
   name_en: "",
   name_it: "",
   icon: "",
@@ -26,17 +33,16 @@ export function CategoryModal({
   onClose,
   onSaved,
 }: CategoryModalProps) {
-  const [form, setForm] = useState<CategoryFormData>(
+  const [form, setForm] = useState<Omit<CategoryFormData, "id">>(
     mode === "edit" && category
       ? {
-          id: category.id,
           name_en: category.name_en,
           name_it: category.name_it,
           icon: category.icon,
           image_uri: category.image_uri,
           credits: category.credits,
         }
-      : EMPTY_FORM
+      : EMPTY_FORM,
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,26 +65,78 @@ export function CategoryModal({
     };
   }, []);
 
-  const set = (field: keyof CategoryFormData, value: string | number) => {
+  const set = (
+    field: keyof Omit<CategoryFormData, "id">,
+    value: string | number,
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const validateIcon = (iconName: string): boolean => {
+    const key = toFaKey(iconName);
+    return key in FaIcons;
+  };
+
+  // Store icon without "Fa" prefix for DB / mobile (e.g. "Hammer", "paint-roller")
+  // Store icon without "Fa" prefix, always lowercase (e.g. "hammer", "paint-roller")
+  const iconForDb = (iconName: string): string => {
+    const trimmed = iconName.trim().replace(/^Fa/i, "") || iconName.trim();
+    return trimmed.toLowerCase();
+  };
+
+  const isUnsplashImageUrl = (url: string): boolean => {
+    try {
+      const u = new URL(url.trim());
+      return u.hostname === "images.unsplash.com" && (u.protocol === "https:" || u.protocol === "http:");
+    } catch {
+      return false;
+    }
+  };
+
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+
+    // Validate icon exists in FA5
+    if (!validateIcon(form.icon)) {
+      setError(
+        `Icon "${form.icon}" not found in FontAwesome 5. Please use a valid FA5 icon name.`,
+      );
+      return;
+    }
+
+    if (!form.image_uri?.trim()) {
+      setError("Image URL is required.");
+      return;
+    }
+    if (!isUnsplashImageUrl(form.image_uri)) {
+      setError(
+        'Image must be from images.unsplash.com (e.g. https://images.unsplash.com/photo-...)',
+      );
+      return;
+    }
+
     setSaving(true);
 
     try {
       const url =
-        mode === "edit"
-          ? `/api/categories/${category!.id}`
-          : "/api/categories";
+        mode === "edit" ? `/api/categories/${category!.id}` : "/api/categories";
       const method = mode === "edit" ? "PUT" : "POST";
+
+      // Generate ID from name_en (lowercase). Store icon without "Fa" for DB/mobile.
+      const payload: CategoryFormData = {
+        ...form,
+        icon: iconForDb(form.icon),
+        id:
+          mode === "edit"
+            ? category!.id
+            : form.name_en.toLowerCase().replace(/\s+/g, "_"),
+      };
 
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -122,19 +180,6 @@ export function CategoryModal({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* ID */}
-          <Field label="ID" hint="Unique identifier, e.g. cleaning">
-            <input
-              type="text"
-              value={form.id}
-              onChange={(e) => set("id", e.target.value)}
-              placeholder="e.g. cleaning"
-              required
-              disabled={mode === "edit"}
-              className="input-field disabled:opacity-50 disabled:cursor-not-allowed"
-            />
-          </Field>
-
           {/* Name EN / IT side by side */}
           <div className="grid grid-cols-2 gap-3">
             <Field label="Name (EN)">
@@ -160,24 +205,24 @@ export function CategoryModal({
           </div>
 
           {/* Icon */}
-          <Field label="Icon" hint="Emoji or icon name">
+          <Field label="Icon" hint="FontAwesome5 name, e.g. FaBroom">
             <input
               type="text"
               value={form.icon}
               onChange={(e) => set("icon", e.target.value)}
-              placeholder="🧹"
+              placeholder="FaBroom"
               required
               className="input-field"
             />
           </Field>
 
           {/* Image URI */}
-          <Field label="Image URL">
+          <Field label="Image URL" hint="Must be from images.unsplash.com">
             <input
               type="text"
               value={form.image_uri}
               onChange={(e) => set("image_uri", e.target.value)}
-              placeholder="https://…"
+              placeholder="https://images.unsplash.com/photo-..."
               required
               className="input-field"
             />
@@ -193,7 +238,9 @@ export function CategoryModal({
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = "none";
-                  e.currentTarget.nextElementSibling?.classList.remove("hidden");
+                  e.currentTarget.nextElementSibling?.classList.remove(
+                    "hidden",
+                  );
                 }}
               />
               <div className="hidden flex-col items-center gap-1 text-[var(--text-tertiary)]">
@@ -208,7 +255,9 @@ export function CategoryModal({
             <input
               type="number"
               value={form.credits}
-              onChange={(e) => set("credits", parseInt(e.target.value, 10) || 0)}
+              onChange={(e) =>
+                set("credits", parseInt(e.target.value, 10) || 0)
+              }
               min={0}
               required
               className="input-field"
@@ -237,7 +286,11 @@ export function CategoryModal({
               className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {saving && <RiLoader4Line className="animate-spin" size={15} />}
-              {saving ? "Saving…" : mode === "add" ? "Add Category" : "Save Changes"}
+              {saving
+                ? "Saving…"
+                : mode === "add"
+                  ? "Add Category"
+                  : "Save Changes"}
             </button>
           </div>
         </form>
@@ -252,7 +305,9 @@ export function CategoryModal({
           background: var(--surface-alt);
           color: var(--text-primary);
           font-size: 0.875rem;
-          transition: border-color 0.15s, box-shadow 0.15s;
+          transition:
+            border-color 0.15s,
+            box-shadow 0.15s;
         }
         .input-field::placeholder {
           color: var(--text-tertiary);

@@ -53,6 +53,7 @@ export default function UserDetailPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -68,7 +69,7 @@ export default function UserDetailPage() {
       }
     };
     fetchUser();
-  }, [id]);
+  }, [id, refreshTick]);
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -300,17 +301,19 @@ export default function UserDetailPage() {
         {/* Service Provider specific info */}
         {isServiceProvider && <ServiceProviderInfo meta={meta} />}
 
-        {/* Credit History - Only show if service provider is viewing their own profile */}
-        {isServiceProvider && isViewingOwnProfile && !!meta.creditHistory && (
+        {/* Credit History - Show for service providers (own profile or admin viewing) */}
+        {isServiceProvider && (isViewingOwnProfile || isCurrentUserAdmin) && (
           <CreditHistorySection
+            userId={id}
             creditHistory={
-              meta.creditHistory as {
+              (meta.creditHistory as {
                 type: string;
                 amount: number;
                 createdAt: string;
                 description: string;
-              }[]
+              }[]) ?? []
             }
+            onAdded={() => setRefreshTick((t) => t + 1)}
           />
         )}
 
