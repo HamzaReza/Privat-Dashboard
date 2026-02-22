@@ -14,6 +14,9 @@ import {
   RiArrowLeftSLine,
   RiArrowRightDoubleLine,
   RiCalendarLine,
+  RiForbidLine,
+  RiCheckboxCircleLine,
+  RiDeleteBinLine,
 } from "react-icons/ri";
 
 const PAGE_SIZE = 10;
@@ -50,6 +53,8 @@ export function UsersTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -157,6 +162,61 @@ export function UsersTab() {
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const handleToggleBlock = async (
+    e: React.MouseEvent,
+    user: User,
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (user.role !== "service_provider") return;
+    const isInactive = user.status === "inactive";
+    setTogglingUserId(user.id);
+    try {
+      const res = await fetch(`/api/users/${user.id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: isInactive ? "active" : "inactive",
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? "Failed to update status");
+      }
+      setError(null);
+      await fetchUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update status");
+    } finally {
+      setTogglingUserId(null);
+    }
+  };
+
+  const handleDelete = async (e: React.MouseEvent, user: User) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (
+      !window.confirm(
+        `Delete user ${user.email ?? user.id}? This cannot be undone.`
+      )
+    )
+      return;
+    setDeletingUserId(user.id);
+    try {
+      const res = await fetch(`/api/users/${user.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? "Failed to delete user");
+      }
+      setError(null);
+      await fetchUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete user");
+    } finally {
+      setDeletingUserId(null);
+    }
+  };
 
   const ROLE_TABS: { value: RoleFilter; label: string }[] = [
     { value: "all", label: "All" },
@@ -450,10 +510,60 @@ export function UsersTab() {
                         {formatDateShort(user.created_at)}
                       </td>
                       <td className="px-5 py-3.5 text-right">
-                        <RiArrowRightSLine
-                          className="text-[var(--text-tertiary)] group-hover:text-[var(--primary)] transition-colors ml-auto"
-                          size={18}
-                        />
+                        <div className="flex items-center justify-end gap-2">
+                          {user.role === "service_provider" && (
+                            <button
+                              onClick={(e) => handleToggleBlock(e, user)}
+                              disabled={
+                                togglingUserId === user.id ||
+                                deletingUserId === user.id
+                              }
+                              title={
+                                user.status === "inactive"
+                                  ? "Enable provider"
+                                  : "Block provider"
+                              }
+                              className={`p-2 rounded-xl border bg-[var(--surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer ${
+                                user.status === "inactive"
+                                  ? "border-[var(--border)] text-[var(--success)] hover:border-[var(--success)] hover:text-[var(--success)]"
+                                  : "border-[var(--border)] text-[var(--error)] hover:border-[var(--error)] hover:text-[var(--error)]"
+                              }`}
+                            >
+                              {togglingUserId === user.id ? (
+                                <RiLoader4Line
+                                  className="animate-spin"
+                                  size={16}
+                                />
+                              ) : user.status === "inactive" ? (
+                                <RiCheckboxCircleLine size={16} />
+                              ) : (
+                                <RiForbidLine size={16} />
+                              )}
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => handleDelete(e, user)}
+                            disabled={
+                              togglingUserId === user.id ||
+                              deletingUserId === user.id
+                            }
+                            title="Delete user"
+                            className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--error)] hover:border-[var(--error)] hover:text-[var(--error)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                          >
+                            {deletingUserId === user.id ? (
+                              <RiLoader4Line
+                                className="animate-spin"
+                                size={16}
+                              />
+                            ) : (
+                              <RiDeleteBinLine size={16} />
+                            )}
+                          </button>
+                          <RiArrowRightSLine
+                            className="text-[var(--text-tertiary)] group-hover:text-[var(--primary)] transition-colors"
+                            size={18}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))}

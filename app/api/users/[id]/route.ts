@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { UserDetailsResponse } from "@/types/user";
+import { invalidateUsersCache } from "@/app/api/users/route";
 
 export async function GET(
   _req: Request,
@@ -37,6 +38,23 @@ export async function GET(
     };
 
     return NextResponse.json(response);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Internal error";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const supabase = createAdminClient();
+    const { error } = await supabase.auth.admin.deleteUser(id);
+    if (error) throw error;
+    invalidateUsersCache();
+    return NextResponse.json({ ok: true });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Internal error";
     return NextResponse.json({ error: msg }, { status: 500 });
