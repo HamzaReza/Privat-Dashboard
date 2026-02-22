@@ -11,7 +11,7 @@ import {
   RiLoader4Line,
 } from "react-icons/ri";
 
-export default function LoginPage() {
+export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +36,10 @@ export default function LoginPage() {
             router.replace("/dashboard");
             return;
           }
-          await supabase.auth.signOut();
+
+          // Regular users go to their detail page
+          router.replace(`/dashboard/users/${session.user.id}`);
+          return;
         }
       } catch {
         // ignore
@@ -70,13 +73,15 @@ export default function LoginPage() {
       const user = data.user;
       const role = user?.user_metadata?.role || user?.app_metadata?.role;
 
-      if (role !== "admin") {
+      // Redirect admins to dashboard
+      if (role === "admin") {
         await supabase.auth.signOut();
-        setError("Access denied. Admin accounts only.");
+        setError("Access denied. This is an admin account.");
         return;
       }
 
-      router.replace("/dashboard");
+      // Regular users go to their detail page
+      router.replace(`/dashboard/users/${user.id}`);
     } catch {
       setError("An unexpected error occurred. Please try again.");
     } finally {
@@ -104,7 +109,7 @@ export default function LoginPage() {
             <span className="text-2xl font-bold text-black">P</span>
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">
-            Privat Dashboard
+            Privat
           </h1>
         </div>
 
@@ -197,16 +202,16 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Link to user sign-in */}
+          {/* Link to admin login */}
           <div className="mt-6 pt-6 border-t border-[var(--border)] text-center">
             <p className="text-sm text-[var(--text-secondary)] mb-2">
-              Not an admin?
+              Admin user?
             </p>
             <button
-              onClick={() => router.push("/signin")}
+              onClick={() => router.push("/login")}
               className="text-sm text-[var(--primary)] hover:text-[var(--primary-dark)] font-medium transition-colors"
             >
-              Sign in as a regular user
+              Sign in to Dashboard
             </button>
           </div>
         </div>

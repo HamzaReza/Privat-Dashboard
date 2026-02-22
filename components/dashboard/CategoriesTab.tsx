@@ -19,9 +19,7 @@ export function CategoriesTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modal, setModal] = useState<
-    | { mode: "add" }
-    | { mode: "edit"; category: ServiceCategory }
-    | null
+    { mode: "add" } | { mode: "edit"; category: ServiceCategory } | null
   >(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -71,7 +69,7 @@ export function CategoriesTab() {
       });
       if (!res.ok) throw new Error("Update failed");
       setCategories((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, hidden: !c.hidden } : c))
+        prev.map((c) => (c.id === id ? { ...c, hidden: !c.hidden } : c)),
       );
     } catch {
       fetchCategories();

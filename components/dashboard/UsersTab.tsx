@@ -74,7 +74,10 @@ export function UsersTab() {
   useEffect(() => {
     if (!calendarOpen) return;
     const handler = (e: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target as Node)
+      ) {
         setCalendarOpen(false);
       }
     };
@@ -108,8 +111,24 @@ export function UsersTab() {
       // Date filter (on created_at)
       const joined = new Date(u.created_at);
       if (dateFilter === "today") {
-        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-        const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+        const start = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          0,
+          0,
+          0,
+          0,
+        );
+        const end = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          23,
+          59,
+          59,
+          999,
+        );
         if (joined < start || joined > end) return false;
       } else if (dateFilter === "current_week") {
         const daysSinceMonday = (now.getDay() + 6) % 7;
@@ -157,7 +176,9 @@ export function UsersTab() {
       {/* Header row */}
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-[var(--text-primary)]">Users</h2>
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">
+            Users
+          </h2>
           <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             {filtered.length} of {users.length} users
           </p>
@@ -237,7 +258,10 @@ export function UsersTab() {
 
           {/* Custom date range picker */}
           <div ref={calendarRef} className="relative">
-            {dateFilter === "custom" && customStart && customEnd && !calendarOpen ? (
+            {dateFilter === "custom" &&
+            customStart &&
+            customEnd &&
+            !calendarOpen ? (
               <button
                 onClick={() => setCalendarOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--primary)] bg-[var(--primary)] text-black text-xs font-semibold hover:bg-[var(--primary-dark)] transition-colors cursor-pointer"
@@ -292,7 +316,10 @@ export function UsersTab() {
       >
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <RiLoader4Line className="animate-spin text-[var(--primary)]" size={28} />
+            <RiLoader4Line
+              className="animate-spin text-[var(--primary)]"
+              size={28}
+            />
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
@@ -315,7 +342,14 @@ export function UsersTab() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[var(--border)] bg-[var(--surface-alt)]">
-                    {["Email", "Name", "Role", "Status", "Credits", "Joined"].map((h) => (
+                    {[
+                      "Email",
+                      "Name",
+                      "Role",
+                      "Status",
+                      "Credits",
+                      "Joined",
+                    ].map((h) => (
                       <th
                         key={h}
                         className="px-5 py-3.5 text-left text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider"
@@ -330,7 +364,9 @@ export function UsersTab() {
                   {paginated.map((user, i) => (
                     <tr
                       key={user.id}
-                      onClick={() => router.push(`/dashboard/users/${user.id}`)}
+                      onClick={() =>
+                        router.push(`/dashboard/users/${user.id}`)
+                      }
                       className={`border-b border-[var(--border-light)] hover:bg-[var(--surface-alt)] transition-colors cursor-pointer group ${
                         i % 2 === 1 ? "bg-[var(--surface-alt)]/30" : ""
                       }`}
@@ -348,7 +384,9 @@ export function UsersTab() {
                                   : "text-yellow-600 dark:text-yellow-400"
                               }`}
                             >
-                              {user.email_verified ? "✓ Verified" : "⚠ Unverified"}
+                              {user.email_verified
+                                ? "✓ Verified"
+                                : "⚠ Unverified"}
                             </span>
                           )}
                         </div>
@@ -372,15 +410,15 @@ export function UsersTab() {
                             user.role === "service_provider"
                               ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
                               : user.role === "customer"
-                              ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
-                              : "bg-[var(--surface-alt)] text-[var(--text-secondary)] border-[var(--border)]"
+                                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                                : "bg-[var(--surface-alt)] text-[var(--text-secondary)] border-[var(--border)]"
                           }`}
                         >
                           {user.role === "service_provider"
                             ? "Provider"
                             : user.role === "customer"
-                            ? "Customer"
-                            : user.role ?? "user"}
+                              ? "Customer"
+                              : (user.role ?? "user")}
                         </span>
                       </td>
                       <td className="px-5 py-3.5">
@@ -392,7 +430,8 @@ export function UsersTab() {
                                 : "bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300"
                             }`}
                           >
-                            {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                            {user.status.charAt(0).toUpperCase() +
+                              user.status.slice(1)}
                           </span>
                         ) : (
                           <span className="text-[var(--text-tertiary)]">—</span>
@@ -427,7 +466,8 @@ export function UsersTab() {
               <p className="text-xs text-[var(--text-tertiary)]">
                 Showing{" "}
                 <span className="font-medium text-[var(--text-secondary)]">
-                  {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)}
+                  {(page - 1) * PAGE_SIZE + 1}–
+                  {Math.min(page * PAGE_SIZE, filtered.length)}
                 </span>{" "}
                 of{" "}
                 <span className="font-medium text-[var(--text-secondary)]">
@@ -443,7 +483,10 @@ export function UsersTab() {
                   className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--primary)] hover:bg-[var(--surface-alt)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   title="First page"
                 >
-                  <RiArrowLeftSLine size={16} style={{ transform: "scaleX(-1)" }} />
+                  <RiArrowLeftSLine
+                    size={16}
+                    style={{ transform: "scaleX(-1)" }}
+                  />
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -460,10 +503,11 @@ export function UsersTab() {
                       (p) =>
                         p === 1 ||
                         p === totalPages ||
-                        (p >= page - 1 && p <= page + 1)
+                        (p >= page - 1 && p <= page + 1),
                     )
                     .reduce<(number | "...")[]>((acc, p, idx, arr) => {
-                      if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...");
+                      if (idx > 0 && p - (arr[idx - 1] as number) > 1)
+                        acc.push("...");
                       acc.push(p);
                       return acc;
                     }, [])
@@ -487,7 +531,7 @@ export function UsersTab() {
                         >
                           {item}
                         </button>
-                      )
+                      ),
                     )}
                 </div>
 

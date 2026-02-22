@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { UserDetailsResponse } from "@/types/user";
+import { Job, JobWithQuotes } from "@/types/job";
 import {
   RiArrowLeftLine,
   RiLoader4Line,
@@ -12,13 +14,13 @@ import {
   RiCalendarLine,
   RiTimeLine,
   RiShieldLine,
-  RiGiftLine,
   RiBriefcaseLine,
   RiMapPinLine,
   RiCoinLine,
   RiFileTextLine,
   RiCheckLine,
   RiCloseLine,
+  RiLogoutBoxLine,
 } from "react-icons/ri";
 
 export default function UserDetailPage() {
@@ -27,6 +29,37 @@ export default function UserDetailPage() {
   const [data, setData] = useState<UserDetailsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeJobTab, setActiveJobTab] = useState<
+    "open" | "active" | "completed"
+  >("open");
+  const [activeProviderTab, setActiveProviderTab] = useState<
+    "leads" | "quotes" | "active" | "completed"
+  >("leads");
+  const [jobs, setJobs] = useState<{
+    open: Job[];
+    active: Job[];
+    completed: Job[];
+  }>({
+    open: [],
+    active: [],
+    completed: [],
+  });
+  const [providerJobs, setProviderJobs] = useState<{
+    leads: Job[];
+    quotes: JobWithQuotes[];
+    active: Job[];
+    completed: Job[];
+  }>({
+    leads: [],
+    quotes: [],
+    active: [],
+    completed: [],
+  });
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [providerJobsLoading, setProviderJobsLoading] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,6 +76,77 @@ export default function UserDetailPage() {
     };
     fetchUser();
   }, [id]);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        setCurrentUserId(session?.user?.id || null);
+        const role =
+          session?.user?.user_metadata?.role ||
+          session?.user?.app_metadata?.role;
+        setCurrentUserRole(role || null);
+      } catch (e) {
+        console.error("Failed to get current user:", e);
+      }
+    };
+    getCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      if (!data || !currentUserId) return;
+
+      const role =
+        data.user.user_metadata?.role || data.user.app_metadata?.role;
+
+      // Only fetch jobs if user is a customer viewing their own profile
+      if (role !== "customer" || currentUserId !== id) return;
+
+      setJobsLoading(true);
+      try {
+        const res = await fetch(`/api/users/${id}/jobs`);
+        if (res.ok) {
+          const jobsData = await res.json();
+          setJobs(jobsData);
+        }
+      } catch (e) {
+        console.error("Failed to fetch jobs:", e);
+      } finally {
+        setJobsLoading(false);
+      }
+    };
+    fetchJobs();
+  }, [id, data, currentUserId]);
+
+  useEffect(() => {
+    const fetchProviderJobs = async () => {
+      if (!data || !currentUserId) return;
+
+      const role =
+        data.user.user_metadata?.role || data.user.app_metadata?.role;
+
+      // Only fetch jobs if user is a service provider viewing their own profile
+      if (role !== "service_provider" || currentUserId !== id) return;
+
+      setProviderJobsLoading(true);
+      try {
+        const res = await fetch(`/api/users/${id}/provider-jobs`);
+        if (res.ok) {
+          const jobsData = await res.json();
+          setProviderJobs(jobsData);
+        }
+      } catch (e) {
+        console.error("Failed to fetch provider jobs:", e);
+      } finally {
+        setProviderJobsLoading(false);
+      }
+    };
+    fetchProviderJobs();
+  }, [id, data, currentUserId]);
 
   if (loading) {
     return (
@@ -75,6 +179,21 @@ export default function UserDetailPage() {
   const avatarUrl = meta.avatar_url;
   const role = meta.role ?? user.app_metadata?.role ?? "user";
   const isServiceProvider = role === "service_provider";
+  const isCustomer = role === "customer";
+  const isViewingOwnProfile = currentUserId === id;
+  const isCurrentUserAdmin = currentUserRole === "admin";
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.replace("/signin");
+    } catch (e) {
+      console.error("Sign out failed:", e);
+      setSigningOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
@@ -83,18 +202,34 @@ export default function UserDetailPage() {
         className="sticky top-0 z-40 bg-[var(--surface)] border-b border-[var(--border)]"
         style={{ boxShadow: "var(--shadow-sm)" }}
       >
-        <div className="max-w-screen-lg mx-auto px-6 h-16 flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors cursor-pointer"
-          >
-            <RiArrowLeftLine size={18} />
-            <span className="text-sm font-medium">Back</span>
-          </button>
-          <div className="w-px h-5 bg-[var(--border)]" />
-          <span className="text-sm text-[var(--text-tertiary)] truncate">
-            {user.email}
-          </span>
+        <div className="max-w-screen-lg mx-auto px-6 h-16 flex items-center justify-between gap-4">
+          {isCurrentUserAdmin ? (
+            <>
+              <button
+                onClick={() => router.back()}
+                className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors cursor-pointer"
+              >
+                <RiArrowLeftLine size={18} />
+                <span className="text-sm font-medium">Back</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <div></div>
+              <button
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] text-sm hover:border-[var(--error)] hover:text-[var(--error)] transition-colors disabled:opacity-60 cursor-pointer"
+              >
+                {signingOut ? (
+                  <RiLoader4Line className="animate-spin" size={15} />
+                ) : (
+                  <RiLogoutBoxLine size={15} />
+                )}
+                <span>Sign out</span>
+              </button>
+            </>
+          )}
         </div>
       </header>
 
@@ -125,9 +260,6 @@ export default function UserDetailPage() {
               <h1 className="text-xl font-bold text-[var(--text-primary)] truncate">
                 {fullName}
               </h1>
-              <p className="text-sm text-[var(--text-secondary)] truncate mt-0.5">
-                {user.email ?? "—"}
-              </p>
               <div className="flex items-center gap-2 mt-2">
                 <span
                   className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
@@ -387,68 +519,231 @@ export default function UserDetailPage() {
           </>
         )}
 
-        {/* Referral codes */}
-        {data.referral_codes && data.referral_codes.length > 0 && (
-          <Section title="Referral Codes">
-            <div className="space-y-2">
-              {data.referral_codes.map((rc) => (
-                <div
-                  key={rc.id}
-                  className="flex items-center justify-between py-2 px-3 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)]"
-                >
-                  <div className="flex items-center gap-2">
-                    <RiGiftLine
-                      size={15}
-                      className="text-[var(--primary)] flex-shrink-0"
-                    />
-                    <code className="text-sm font-mono text-[var(--primary)]">
-                      {rc.code}
-                    </code>
-                  </div>
-                  <span className="text-xs text-[var(--text-tertiary)]">
-                    Used {rc.uses} time{rc.uses !== 1 ? "s" : ""}
-                  </span>
-                </div>
-              ))}
+        {/* Customer Jobs - Only show if customer is viewing their own profile */}
+        {isCustomer && isViewingOwnProfile && (
+          <div
+            className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6"
+            style={{ boxShadow: "var(--shadow-sm)" }}
+          >
+            <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-4">
+              Jobs
+            </h2>
+
+            {/* Tab selector */}
+            <div className="flex items-center gap-1 bg-[var(--surface-alt)] rounded-xl p-1 mb-4 w-fit border border-[var(--border)]">
+              <button
+                onClick={() => setActiveJobTab("open")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  activeJobTab === "open"
+                    ? "bg-[var(--primary)] text-black shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                Open ({jobs.open.length})
+              </button>
+              <button
+                onClick={() => setActiveJobTab("active")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  activeJobTab === "active"
+                    ? "bg-[var(--primary)] text-black shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                Active ({jobs.active.length})
+              </button>
+              <button
+                onClick={() => setActiveJobTab("completed")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  activeJobTab === "completed"
+                    ? "bg-[var(--primary)] text-black shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                Completed ({jobs.completed.length})
+              </button>
             </div>
-          </Section>
+
+            {/* Jobs list */}
+            {jobsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <RiLoader4Line
+                  className="animate-spin text-[var(--primary)]"
+                  size={24}
+                />
+              </div>
+            ) : jobs[activeJobTab].length === 0 ? (
+              <div className="text-center py-12 text-[var(--text-tertiary)]">
+                <p className="text-sm">No {activeJobTab} jobs</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {jobs[activeJobTab].map((job) => (
+                  <div
+                    key={job.id}
+                    className="py-3 px-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] hover:border-[var(--primary)]/50 transition-colors"
+                  >
+                    {/* Title and Budget Row */}
+                    <div className="flex items-start justify-between gap-4 mb-1">
+                      <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
+                        {job.title}
+                      </p>
+                      {job.budget && (
+                        <p className="text-sm font-semibold text-[var(--primary)] flex-shrink-0">
+                          €{job.budget}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Description Row */}
+                    {job.description && (
+                      <p className="text-xs text-[var(--text-secondary)] mb-2 line-clamp-2">
+                        {job.description}
+                      </p>
+                    )}
+
+                    {/* Location and Date Row */}
+                    <div className="flex items-center justify-between text-xs text-[var(--text-tertiary)]">
+                      {job.location && (
+                        <span className="flex items-center gap-1">
+                          <RiMapPinLine size={12} />
+                          {job.location}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <RiCalendarLine size={12} />
+                        {formatDate(job.created_at)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
-        {/* Subscription history */}
-        {data.subscription_history && data.subscription_history.length > 0 && (
-          <Section title="Subscription History">
-            <div className="space-y-2">
-              {data.subscription_history.map((sub) => (
-                <div
-                  key={sub.id}
-                  className="flex items-center justify-between py-3 px-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)]"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-[var(--text-primary)]">
-                      {sub.plan}
-                    </p>
-                    <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
-                      {formatDate(sub.started_at)}
-                      {sub.ended_at
-                        ? ` → ${formatDate(sub.ended_at)}`
-                        : " → now"}
-                    </p>
-                  </div>
-                  <span
-                    className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
-                      sub.status === "active"
-                        ? "bg-[var(--success-bg)] text-[var(--success)] border-[var(--success)]/20"
-                        : sub.status === "cancelled"
-                          ? "bg-[var(--error-bg)] text-[var(--error)] border-[var(--error)]/20"
-                          : "bg-[var(--surface-alt)] text-[var(--text-secondary)] border-[var(--border)]"
-                    }`}
-                  >
-                    {sub.status}
-                  </span>
-                </div>
-              ))}
+        {/* Service Provider Jobs - Only show if service provider is viewing their own profile */}
+        {isServiceProvider && isViewingOwnProfile && (
+          <div
+            className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6"
+            style={{ boxShadow: "var(--shadow-sm)" }}
+          >
+            <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-4">
+              Jobs
+            </h2>
+
+            {/* Tab selector */}
+            <div className="flex items-center gap-1 bg-[var(--surface-alt)] rounded-xl p-1 mb-4 w-fit border border-[var(--border)]">
+              <button
+                onClick={() => setActiveProviderTab("leads")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  activeProviderTab === "leads"
+                    ? "bg-[var(--primary)] text-black shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                Leads ({providerJobs.leads.length})
+              </button>
+              <button
+                onClick={() => setActiveProviderTab("quotes")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  activeProviderTab === "quotes"
+                    ? "bg-[var(--primary)] text-black shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                Quotes ({providerJobs.quotes.length})
+              </button>
+              <button
+                onClick={() => setActiveProviderTab("active")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  activeProviderTab === "active"
+                    ? "bg-[var(--primary)] text-black shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                Active ({providerJobs.active.length})
+              </button>
+              <button
+                onClick={() => setActiveProviderTab("completed")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                  activeProviderTab === "completed"
+                    ? "bg-[var(--primary)] text-black shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                Completed ({providerJobs.completed.length})
+              </button>
             </div>
-          </Section>
+
+            {/* Jobs list */}
+            {providerJobsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <RiLoader4Line
+                  className="animate-spin text-[var(--primary)]"
+                  size={24}
+                />
+              </div>
+            ) : providerJobs[activeProviderTab].length === 0 ? (
+              <div className="text-center py-12 text-[var(--text-tertiary)]">
+                <p className="text-sm">No {activeProviderTab} jobs</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {providerJobs[activeProviderTab].map((job) => {
+                  const quoteDesc = job.quotes?.[0]?.description?.trim();
+                  const descriptionText =
+                    activeProviderTab === "quotes"
+                      ? quoteDesc
+                      : job.description?.trim();
+                  const minAmount = job.quotes?.[0]?.minAmount;
+                  const maxAmount = job.quotes?.[0]?.maxAmount;
+                  const sameAmount = minAmount === maxAmount;
+
+                  return (
+                    <div
+                      key={job.id}
+                      className="py-3 px-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] hover:border-[var(--primary)]/50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-4 mb-1">
+                        <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
+                          {job.title}
+                        </p>
+                        {job.budget && (
+                          <p className="text-sm font-semibold text-[var(--primary)] flex-shrink-0">
+                            €{job.budget}
+                          </p>
+                        )}
+                      </div>
+                      {descriptionText && (
+                        <p className="text-xs text-[var(--text-secondary)] mb-2 line-clamp-2">
+                          {descriptionText}
+                        </p>
+                      )}
+                      {activeProviderTab === "quotes" && (
+                        <p className="text-xs text-[var(--text-secondary)] mb-2 line-clamp-2">
+                          {sameAmount
+                            ? `€${minAmount}`
+                            : `€${minAmount} - €${maxAmount}`}
+                        </p>
+                      )}
+                      <div className="flex items-center justify-between text-xs text-[var(--text-tertiary)]">
+                        {job.location && (
+                          <span className="flex items-center gap-1">
+                            <RiMapPinLine size={12} />
+                            {job.location}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1">
+                          <RiCalendarLine size={12} />
+                          {formatDate(job.created_at)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
       </main>
     </div>

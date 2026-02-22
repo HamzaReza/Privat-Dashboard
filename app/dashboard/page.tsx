@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { UsersTab } from "@/components/dashboard/UsersTab";
 import { CategoriesTab } from "@/components/dashboard/CategoriesTab";
 import {
@@ -41,8 +40,7 @@ export default function DashboardPage() {
         }
 
         const role =
-          session.user.user_metadata?.role ||
-          session.user.app_metadata?.role;
+          session.user.user_metadata?.role || session.user.app_metadata?.role;
 
         if (role !== "admin") {
           await supabase.auth.signOut();
@@ -106,7 +104,6 @@ export default function DashboardPage() {
                 {userEmail}
               </span>
             )}
-            <ThemeToggle />
             <button
               onClick={handleSignOut}
               disabled={signingOut}
