@@ -170,14 +170,14 @@ export function UsersTab() {
     e.preventDefault();
     e.stopPropagation();
     if (user.role !== "service_provider") return;
-    const isInactive = user.status === "inactive";
+    const isActive = user.status === "active";
     setTogglingUserId(user.id);
     try {
       const res = await fetch(`/api/users/${user.id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          status: isInactive ? "active" : "inactive",
+          status: isActive ? "blocked" : "active",
         }),
       });
       if (!res.ok) {
@@ -519,14 +519,14 @@ export function UsersTab() {
                                 deletingUserId === user.id
                               }
                               title={
-                                user.status === "inactive"
-                                  ? "Enable provider"
-                                  : "Block provider"
+                                user.status === "active"
+                                  ? "Block provider"
+                                  : "Approve provider"
                               }
                               className={`p-2 rounded-xl border bg-[var(--surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer ${
-                                user.status === "inactive"
-                                  ? "border-[var(--border)] text-[var(--success)] hover:border-[var(--success)] hover:text-[var(--success)]"
-                                  : "border-[var(--border)] text-[var(--error)] hover:border-[var(--error)] hover:text-[var(--error)]"
+                                user.status === "active"
+                                  ? "border-[var(--border)] text-[var(--error)] hover:border-[var(--error)] hover:text-[var(--error)]"
+                                  : "border-[var(--border)] text-[var(--success)] hover:border-[var(--success)] hover:text-[var(--success)]"
                               }`}
                             >
                               {togglingUserId === user.id ? (
@@ -534,10 +534,10 @@ export function UsersTab() {
                                   className="animate-spin"
                                   size={16}
                                 />
-                              ) : user.status === "inactive" ? (
-                                <RiCheckboxCircleLine size={16} />
-                              ) : (
+                              ) : user.status === "active" ? (
                                 <RiForbidLine size={16} />
+                              ) : (
+                                <RiCheckboxCircleLine size={16} />
                               )}
                             </button>
                           )}

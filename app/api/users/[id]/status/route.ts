@@ -9,7 +9,8 @@ export async function PATCH(
   try {
     const { id: userId } = await params;
     const body = await _request.json();
-    const status = body?.status === "inactive" ? "inactive" : "active";
+    const validStatuses = ["active", "blocked", "inactive"];
+    const status: string = validStatuses.includes(body?.status) ? body.status : "active";
 
     const supabase = createAdminClient();
     const { data: userData, error: fetchError } = await supabase.auth.admin.getUserById(userId);
