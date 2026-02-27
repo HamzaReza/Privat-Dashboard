@@ -112,6 +112,23 @@
   --sidebar-border: #2A2A2A;
 }
 
+/* Marketing / Gold theme HSL variables */
+:root {
+  --background-hsl: 30 5% 5%;
+  --foreground-hsl: 40 15% 85%;
+  --card-hsl: 30 5% 8%;
+  --border-hsl: 42 30% 20%;
+  --muted-hsl: 30 5% 15%;
+  --muted-foreground-hsl: 40 10% 55%;
+  --primary-hsl: 42 70% 50%;
+  --primary-foreground-hsl: 30 5% 5%;
+  --gold: 42 70% 50%;
+  --gold-light: 42 80% 65%;
+  --gold-dark: 42 60% 35%;
+  --gold-muted: 42 30% 25%;
+  --marketing-radius: 0.25rem;
+}
+
 @theme inline {
   --color-primary: var(--primary);
   --color-primary-light: var(--primary-light);
@@ -149,6 +166,11 @@
 
   --font-sans: var(--font-space-grotesk), "Space Grotesk", sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
+  --font-heading: var(--font-cinzel), "Cinzel", serif;
+  --font-body: var(--font-outfit), "Outfit", sans-serif;
+
+  --tracking-widest: 0.2em;
+  --tracking-ultra: 0.35em;
 }
 
 * {
@@ -242,3 +264,109 @@ body {
 .react-datepicker__navigation-icon::before {
   border-color: var(--text-secondary) !important;
 }
+
+/* ── Marketing utility classes (ported from privat-black-gold) ── */
+
+.text-gold-gradient {
+  background: linear-gradient(
+    135deg,
+    hsl(42, 60%, 40%) 0%,
+    hsl(42, 80%, 65%) 40%,
+    hsl(42, 90%, 75%) 50%,
+    hsl(42, 80%, 65%) 60%,
+    hsl(42, 60%, 40%) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-gold-gradient {
+  border-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(42, 70%, 50%) 50%,
+    transparent 100%
+  ) 1;
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(
+    135deg,
+    hsl(42, 60%, 40%) 0%,
+    hsl(42, 80%, 60%) 50%,
+    hsl(42, 60%, 40%) 100%
+  );
+}
+
+.bg-gold-gradient-hover {
+  background: linear-gradient(
+    135deg,
+    hsl(42, 60%, 45%) 0%,
+    hsl(42, 80%, 65%) 50%,
+    hsl(42, 60%, 45%) 100%
+  );
+}
+
+.bg-subtle-texture {
+  background-image: radial-gradient(
+    ellipse at 50% 0%,
+    hsl(42, 30%, 10%) 0%,
+    transparent 60%
+  );
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    hsl(42 80% 65% / 0.08) 45%,
+    hsl(42 80% 65% / 0.15) 50%,
+    hsl(42 80% 65% / 0.08) 55%,
+    transparent 70%
+  );
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Marketing font helpers */
+.font-heading { font-family: var(--font-heading); }
+.font-body    { font-family: var(--font-body); }
+
+/* Marketing letter-spacing helpers */
+.tracking-widest-marketing { letter-spacing: 0.2em; }
+.tracking-ultra             { letter-spacing: 0.35em; }

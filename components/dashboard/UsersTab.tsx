@@ -425,7 +425,7 @@ export function UsersTab() {
                     <tr
                       key={user.id}
                       onClick={() =>
-                        router.push(`/dashboard/users/${user.id}`)
+                        router.push(`/admin-dashboard/user/${user.id}`)
                       }
                       className={`border-b border-[var(--border-light)] hover:bg-[var(--surface-alt)] transition-colors cursor-pointer group ${
                         i % 2 === 1 ? "bg-[var(--surface-alt)]/30" : ""

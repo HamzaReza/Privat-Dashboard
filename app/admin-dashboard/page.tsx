@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { UsersTab } from "@/components/dashboard/UsersTab";
 import { CategoriesTab } from "@/components/dashboard/CategoriesTab";
@@ -35,7 +36,7 @@ export default function DashboardPage() {
         } = await supabase.auth.getSession();
 
         if (!session?.user) {
-          router.replace("/login");
+          router.replace("/admin-login");
           return;
         }
 
@@ -44,13 +45,13 @@ export default function DashboardPage() {
 
         if (role !== "admin") {
           await supabase.auth.signOut();
-          router.replace("/login");
+          router.replace("/admin-login");
           return;
         }
 
         setUserEmail(session.user.email ?? null);
       } catch {
-        router.replace("/login");
+        router.replace("/admin-login");
       } finally {
         setLoading(false);
       }
@@ -64,7 +65,7 @@ export default function DashboardPage() {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
-      router.replace("/login");
+      router.replace("/admin-login");
     } catch {
       setSigningOut(false);
     }
@@ -82,32 +83,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] flex flex-col">
+    <div className="min-h-screen bg-[var(--background)] flex flex-col font-body">
       {/* Header */}
-      <header
-        className="sticky top-0 z-40 bg-[var(--surface)] border-b border-[var(--border)]"
-        style={{ boxShadow: "var(--shadow-sm)" }}
-      >
+      <header className="sticky top-0 z-40 border-b border-[hsl(var(--border-hsl))/0.5] bg-[hsl(var(--background-hsl))/0.9] backdrop-blur-md">
         <div className="max-w-screen-xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[var(--primary)] flex items-center justify-center">
-              <span className="text-sm font-bold text-black">P</span>
-            </div>
-            <span className="font-semibold text-[var(--text-primary)] text-sm hidden sm:block">
-              Privat Dashboard
-            </span>
-          </div>
+          <Link href="/" className="flex items-center">
+            <img src="/privat-logo.png" alt="PRIVAT" className="h-10" />
+          </Link>
 
           <div className="flex items-center gap-3">
             {userEmail && (
-              <span className="text-sm text-[var(--text-secondary)] hidden md:block truncate max-w-[200px]">
+              <span className="text-sm font-body text-[hsl(var(--muted-foreground-hsl))] hidden md:block truncate max-w-[200px]">
                 {userEmail}
               </span>
             )}
             <button
               onClick={handleSignOut}
               disabled={signingOut}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] text-[var(--text-secondary)] text-sm hover:border-[var(--error)] hover:text-[var(--error)] transition-colors disabled:opacity-60 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-sm border border-[hsl(var(--border-hsl))/0.5] text-[hsl(var(--muted-foreground-hsl))] text-sm font-body hover:border-[hsl(var(--primary-hsl))] hover:text-[hsl(var(--primary-hsl))] transition-colors disabled:opacity-60 cursor-pointer"
             >
               {signingOut ? (
                 <RiLoader4Line className="animate-spin" size={15} />
@@ -128,7 +121,7 @@ export default function DashboardPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-body font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === tab.id
                   ? "bg-[var(--primary)] text-black shadow-sm"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"

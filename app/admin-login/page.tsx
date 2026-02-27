@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
-  RiMailLine,
-  RiLockLine,
   RiEyeLine,
   RiEyeOffLine,
   RiLoader4Line,
+  RiLockLine,
+  RiMailLine,
 } from "react-icons/ri";
 
-export default function SignInPage() {
+export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,13 +33,10 @@ export default function SignInPage() {
             session.user.user_metadata?.role || session.user.app_metadata?.role;
 
           if (role === "admin") {
-            router.replace("/dashboard");
+            router.replace("/admin-dashboard");
             return;
           }
-
-          // Regular users go to their detail page
-          router.replace(`/dashboard/users/${session.user.id}`);
-          return;
+          await supabase.auth.signOut();
         }
       } catch {
         // ignore
@@ -73,18 +70,18 @@ export default function SignInPage() {
       const user = data.user;
       const role = user?.user_metadata?.role || user?.app_metadata?.role;
 
-      // Redirect admins to dashboard
-      if (role === "admin") {
+      if (role !== "admin") {
         await supabase.auth.signOut();
-        setError("Access denied. This is an admin account.");
+        setError("Access denied. Admin accounts only.");
         return;
       }
 
-      // Regular users go to their detail page
-      router.replace(`/dashboard/users/${user.id}`);
+      router.replace("/admin-dashboard");
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -103,16 +100,11 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4">
+    <div className="min-h-screen flex justify-center bg-[var(--background)] px-4 font-body">
       <div className="w-full max-w-md">
         {/* Logo / Brand */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--primary)] mb-4">
-            <span className="text-2xl font-bold text-black">P</span>
-          </div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">
-            Privat
-          </h1>
+          <img src="/privat-logo.png" alt="PRIVAT" className=" mx-auto h-50" />
         </div>
 
         {/* Card */}
@@ -120,7 +112,7 @@ export default function SignInPage() {
           className="bg-[var(--surface)] rounded-2xl p-8 border border-[var(--border)]"
           style={{ boxShadow: "var(--shadow-lg)" }}
         >
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-6">
+          <h2 className="font-heading text-base font-semibold tracking-widest-marketing uppercase text-[var(--text-primary)] mb-6">
             Sign in to your account
           </h2>
 
@@ -203,19 +195,6 @@ export default function SignInPage() {
               {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
-
-          {/* Link to admin login */}
-          <div className="mt-6 pt-6 border-t border-[var(--border)] text-center">
-            <p className="text-sm text-[var(--text-secondary)] mb-2">
-              Admin user?
-            </p>
-            <button
-              onClick={() => router.push("/login")}
-              className="text-sm text-[var(--primary)] hover:text-[var(--primary-dark)] font-medium transition-colors"
-            >
-              Sign in to Dashboard
-            </button>
-          </div>
         </div>
       </div>
     </div>

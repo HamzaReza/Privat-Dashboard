@@ -1,7 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { RiAddLine, RiLoader4Line, RiCloseLine, RiCoinsLine } from "react-icons/ri";
+import { useEffect, useRef, useState } from "react";
+import {
+  RiAddLine,
+  RiCloseLine,
+  RiCoinsLine,
+  RiLoader4Line,
+} from "react-icons/ri";
 
 interface CreditHistoryEntry {
   type: string;
@@ -14,20 +19,34 @@ interface CreditHistorySectionProps {
   userId: string;
   creditHistory: CreditHistoryEntry[];
   onAdded: () => void;
+  isViewingOwn: boolean;
 }
 
 const PACKAGES = [
   { id: "starter", name: "Starter", credits: 25, price: 35, perCredit: 1.4 },
   { id: "small", name: "Small", credits: 60, price: 72, perCredit: 1.2 },
-  { id: "medium", name: "Medium (Best Value)", credits: 150, price: 157.5, perCredit: 1.05 },
+  {
+    id: "medium",
+    name: "Medium (Best Value)",
+    credits: 150,
+    price: 157.5,
+    perCredit: 1.05,
+  },
   { id: "pro", name: "Pro", credits: 350, price: 332.5, perCredit: 0.95 },
-  { id: "business", name: "Business", credits: 900, price: 765, perCredit: 0.85 },
+  {
+    id: "business",
+    name: "Business",
+    credits: 900,
+    price: 765,
+    perCredit: 0.85,
+  },
 ] as const;
 
 export function CreditHistorySection({
   userId,
   creditHistory,
   onAdded,
+  isViewingOwn,
 }: CreditHistorySectionProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -37,18 +56,20 @@ export function CreditHistorySection({
         className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6"
         style={{ boxShadow: "var(--shadow-sm)" }}
       >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">
-            Credit History
-          </h2>
-          <button
-            onClick={() => setModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-xs font-semibold transition-colors cursor-pointer"
-          >
-            <RiAddLine size={14} />
-            Add Credits
-          </button>
-        </div>
+        {isViewingOwn && (
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">
+              Credit History
+            </h2>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-xs font-semibold transition-colors cursor-pointer"
+            >
+              <RiAddLine size={14} />
+              Add Credits
+            </button>
+          </div>
+        )}
 
         {creditHistory.length === 0 ? (
           <p className="text-sm text-[var(--text-tertiary)] text-center py-6">
@@ -131,7 +152,9 @@ function AddCreditsModal({
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   const handleConfirm = async () => {
@@ -163,7 +186,9 @@ function AddCreditsModal({
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: "var(--glass-overlay)" }}
-      onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
+      onClick={(e) => {
+        if (e.target === overlayRef.current) onClose();
+      }}
     >
       <div
         className="w-full max-w-md bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden"
@@ -210,7 +235,9 @@ function AddCreditsModal({
                   )}
                 </div>
                 <div>
-                  <p className={`text-sm font-semibold ${selected === pkg.id ? "text-[var(--primary)]" : "text-[var(--text-primary)]"}`}>
+                  <p
+                    className={`text-sm font-semibold ${selected === pkg.id ? "text-[var(--primary)]" : "text-[var(--text-primary)]"}`}
+                  >
                     {pkg.name}
                   </p>
                   <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
