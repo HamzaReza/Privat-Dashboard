@@ -77,21 +77,23 @@ export default function ProfilePage() {
     checkAuth();
   }, [id, router]);
 
+  const fetchUser = async () => {
+    try {
+      const res = await fetch(`/api/users/${id}`);
+      if (!res.ok) throw new Error("User not found");
+      const json: UserDetailsResponse = await res.json();
+      setData(json);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!authChecked) return;
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(`/api/users/${id}`);
-        if (!res.ok) throw new Error("User not found");
-        const json: UserDetailsResponse = await res.json();
-        setData(json);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, authChecked]);
 
   useEffect(() => {
@@ -287,7 +289,27 @@ export default function ProfilePage() {
                 description: string;
               }[]) ?? []
             }
-            onAdded={() => {}}
+            onAdded={() => {
+              const prevCredits = (meta.credits as number) ?? 0;
+              const started = Date.now();
+              const poll = async () => {
+                if (Date.now() - started > 30000) return; // give up after 30s
+                try {
+                  const res = await fetch(`/api/users/${id}`);
+                  if (res.ok) {
+                    const json: UserDetailsResponse = await res.json();
+                    const newCredits =
+                      (json.user?.user_metadata?.credits as number) ?? 0;
+                    if (newCredits > prevCredits) {
+                      setData(json);
+                      return;
+                    }
+                  }
+                } catch {}
+                setTimeout(poll, 2000);
+              };
+              setTimeout(poll, 2000);
+            }}
             isViewingOwn={isViewingOwnProfile}
           />
         )}

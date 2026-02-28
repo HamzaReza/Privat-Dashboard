@@ -1,5 +1,6 @@
 "use client";
 
+import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 import { useEffect, useRef, useState } from "react";
 import {
   RiAddLine,
@@ -7,6 +8,7 @@ import {
   RiCoinsLine,
   RiLoader4Line,
 } from "react-icons/ri";
+import { PACKAGES } from "@/constants/packages";
 
 interface CreditHistoryEntry {
   type: string;
@@ -21,26 +23,6 @@ interface CreditHistorySectionProps {
   onAdded: () => void;
   isViewingOwn: boolean;
 }
-
-const PACKAGES = [
-  { id: "starter", name: "Starter", credits: 25, price: 35, perCredit: 1.4 },
-  { id: "small", name: "Small", credits: 60, price: 72, perCredit: 1.2 },
-  {
-    id: "medium",
-    name: "Medium (Best Value)",
-    credits: 150,
-    price: 157.5,
-    perCredit: 1.05,
-  },
-  { id: "pro", name: "Pro", credits: 350, price: 332.5, perCredit: 0.95 },
-  {
-    id: "business",
-    name: "Business",
-    credits: 900,
-    price: 765,
-    perCredit: 0.85,
-  },
-] as const;
 
 export function CreditHistorySection({
   userId,
@@ -141,6 +123,41 @@ function AddCreditsModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const paddleRef = useRef<Paddle | undefined>(undefined);
+  // Keep a stable ref so the Paddle eventCallback always calls the latest onAdded
+  const onAddedRef = useRef(onAdded);
+  useEffect(() => {
+    onAddedRef.current = onAdded;
+  }, [onAdded]);
+
+  // Tracks whether the checkout completed so we know the "closed" event is post-payment
+  const completedRef = useRef(false);
+
+  // Initialize Paddle.js once on mount
+  useEffect(() => {
+    initializePaddle({
+      environment:
+        (process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT as
+          | "sandbox"
+          | "production") ?? "sandbox",
+      token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!,
+      eventCallback(event) {
+        if (event.name === "checkout.completed") {
+          completedRef.current = true;
+          // Close the overlay and start polling for updated credits
+          paddleRef.current?.Checkout.close();
+          setSaving(false);
+          onAddedRef.current();
+        }
+        if (event.name === "checkout.closed" && !completedRef.current) {
+          // User dismissed overlay without paying
+          setSaving(false);
+        }
+      },
+    }).then((paddle) => {
+      if (paddle) paddleRef.current = paddle;
+    });
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -157,24 +174,27 @@ function AddCreditsModal({
     };
   }, []);
 
-  const handleConfirm = async () => {
+  const handleBuy = async () => {
     if (!selected) return;
-    const pkg = PACKAGES.find((p) => p.id === selected);
-    if (!pkg) return;
 
     setSaving(true);
     setError(null);
+    completedRef.current = false;
+
     try {
-      const res = await fetch(`/api/users/${userId}/credits`, {
+      const res = await fetch("/api/paddle/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ credits: pkg.credits, packageName: pkg.name }),
+        body: JSON.stringify({ userId, packageId: selected }),
       });
+
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Failed to add credits");
+        throw new Error(data.error ?? "Failed to create checkout");
       }
-      onAdded();
+
+      const { transactionId } = await res.json();
+      paddleRef.current?.Checkout.open({ transactionId });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
       setSaving(false);
@@ -272,12 +292,12 @@ function AddCreditsModal({
             Cancel
           </button>
           <button
-            onClick={handleConfirm}
+            onClick={handleBuy}
             disabled={!selected || saving}
             className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {saving && <RiLoader4Line className="animate-spin" size={15} />}
-            {saving ? "Adding…" : "Confirm"}
+            {saving ? "Opening…" : "Buy with Paddle"}
           </button>
         </div>
       </div>
