@@ -1,3 +1,4 @@
+import { AuthWatcher } from "@/components/AuthWatcher";
 import type { Metadata } from "next";
 import { Space_Grotesk, Geist_Mono, Cinzel, Outfit } from "next/font/google";
 import "./globals.css";
@@ -41,6 +42,7 @@ export default function RootLayout({
         className={`${spaceGrotesk.variable} ${geistMono.variable} ${cinzel.variable} ${outfit.variable} antialiased`}
         suppressHydrationWarning
       >
+        <AuthWatcher />
         {children}
       </body>
     </html>

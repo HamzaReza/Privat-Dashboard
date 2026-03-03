@@ -30,7 +30,10 @@ export interface Job {
   category_name_it?: string;
   quotes?: Quote[];
   job_started_time?: string;
-  reviews?: unknown;
+  reviews?: {
+    by_user?: { rating: number; comment: string };
+    by_provider?: { rating: number; comment: string };
+  };
 }
 
 export interface JobWithQuotes extends Job {

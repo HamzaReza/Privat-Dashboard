@@ -35,51 +35,71 @@ export function CreditHistorySection({
   return (
     <>
       <div
-        className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6"
+        className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden"
         style={{ boxShadow: "var(--shadow-sm)" }}
       >
-        {isViewingOwn && (
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">
-              Credit History
-            </h2>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-xs font-semibold transition-colors cursor-pointer"
-            >
-              <RiAddLine size={14} />
-              Add Credits
-            </button>
-          </div>
-        )}
+        {/* Gold accent top line */}
+        <div className="h-px bg-gradient-to-r from-transparent via-[var(--primary)]/40 to-transparent" />
 
-        {creditHistory.length === 0 ? (
-          <p className="text-sm text-[var(--text-tertiary)] text-center py-6">
-            No credit history yet
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {creditHistory.map((entry, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between py-3 px-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)]"
+        <div className="px-6 pt-5 pb-6">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center">
+                <RiCoinsLine size={14} className="text-[var(--primary)]" />
+              </div>
+              <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">
+                Credit History
+              </h2>
+            </div>
+            {isViewingOwn && (
+              <button
+                onClick={() => setModalOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-xs font-medium transition-colors cursor-pointer"
               >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`text-lg font-bold ${
+                <RiAddLine size={13} />
+                Add Credits
+              </button>
+            )}
+          </div>
+
+          {creditHistory.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 gap-2 text-[var(--text-tertiary)]">
+              <RiCoinsLine size={28} className="opacity-25" />
+              <p className="text-sm">No credit history yet</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {creditHistory.map((entry, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center gap-4 py-3 px-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border)] hover:border-[var(--primary)]/20 transition-colors"
+                >
+                  {/* Amount badge */}
+                  <div
+                    className={`flex-shrink-0 min-w-[52px] h-10 rounded-lg px-2 flex items-center justify-center border ${
                       entry.type === "deduct"
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-green-600 dark:text-green-400"
+                        ? "bg-red-500/10 border-red-500/20"
+                        : "bg-green-500/10 border-green-500/20"
                     }`}
                   >
-                    {entry.type === "deduct" ? "-" : "+"}
-                    {entry.amount}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-[var(--text-primary)]">
+                    <span
+                      className={`text-[15px] font-bold tabular-nums ${
+                        entry.type === "deduct"
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-green-600 dark:text-green-400"
+                      }`}
+                    >
+                      {entry.type === "deduct" ? "−" : "+"}
+                      {entry.amount}
+                    </span>
+                  </div>
+
+                  {/* Description + date */}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[15px] font-medium text-[var(--text-primary)] truncate">
                       {entry.description}
                     </p>
-                    <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                    <p className="text-[13px] text-[var(--text-tertiary)] mt-0.5">
                       {new Date(entry.createdAt).toLocaleString("en-GB", {
                         day: "2-digit",
                         month: "short",
@@ -90,10 +110,10 @@ export function CreditHistorySection({
                     </p>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {modalOpen && (

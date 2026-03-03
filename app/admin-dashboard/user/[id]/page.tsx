@@ -175,10 +175,10 @@ export default function AdminUserDetailPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] font-body">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-[hsl(var(--border-hsl))/0.5] bg-[hsl(var(--background-hsl))/0.9] backdrop-blur-md">
-        <div className="max-w-screen-lg mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[hsl(var(--background-hsl))/0.85] backdrop-blur-xl">
+        <div className="w-full px-6 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img src="/privat-logo.png" alt="PRIVAT" className="h-40" />
+            <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-7 w-auto" />
           </Link>
           <button
             onClick={() => router.back()}
@@ -191,7 +191,7 @@ export default function AdminUserDetailPage() {
       </header>
 
       {/* Content */}
-      <main className="max-w-screen-lg mx-auto px-6 py-8 space-y-6">
+      <main className="w-full px-6 py-8 space-y-6">
         <UserProfileCard user={user} isCurrentUserAdmin={isCurrentUserAdmin} />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

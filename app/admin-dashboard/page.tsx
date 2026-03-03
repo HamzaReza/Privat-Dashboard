@@ -85,10 +85,10 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] flex flex-col font-body">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-[hsl(var(--border-hsl))/0.5] bg-[hsl(var(--background-hsl))/0.9] backdrop-blur-md">
-        <div className="max-w-screen-xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[hsl(var(--background-hsl))/0.85] backdrop-blur-xl">
+        <div className="w-full px-6 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img src="/privat-logo.png" alt="PRIVAT" className="h-10" />
+            <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-7 w-auto" />
           </Link>
 
           <div className="flex items-center gap-3">
@@ -100,7 +100,7 @@ export default function DashboardPage() {
             <button
               onClick={handleSignOut}
               disabled={signingOut}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-sm border border-[hsl(var(--border-hsl))/0.5] text-[hsl(var(--muted-foreground-hsl))] text-sm font-body hover:border-[hsl(var(--primary-hsl))] hover:text-[hsl(var(--primary-hsl))] transition-colors disabled:opacity-60 cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-[hsl(var(--border-hsl))/0.5] text-[hsl(var(--muted-foreground-hsl))] text-sm hover:border-[hsl(var(--primary-hsl))/0.6] hover:text-[hsl(var(--primary-hsl))] transition-all duration-200 disabled:opacity-60 cursor-pointer"
             >
               {signingOut ? (
                 <RiLoader4Line className="animate-spin" size={15} />

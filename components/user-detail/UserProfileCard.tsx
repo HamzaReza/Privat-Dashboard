@@ -22,12 +22,18 @@ export function UserProfileCard({
 
   return (
     <div
-      className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6"
-      style={{ boxShadow: "var(--shadow-sm)" }}
+      className="shimmer bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden"
+      style={{ boxShadow: "var(--shadow-md)" }}
     >
-      <div className="flex items-start gap-5">
+      {/* Gold accent line */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[var(--primary)]/50 to-transparent" />
+      <div className="p-6">
+        <div className="flex items-start gap-5">
         {/* Avatar */}
-        <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border)] overflow-hidden flex items-center justify-center">
+        <div
+          className="flex-shrink-0 w-16 h-16 rounded-full bg-[var(--surface-alt)] border-2 border-[var(--primary)]/35 overflow-hidden flex items-center justify-center"
+          style={{ boxShadow: "0 0 0 4px rgba(212,175,55,0.1)" }}
+        >
           {avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -42,12 +48,12 @@ export function UserProfileCard({
 
         {/* Name & badge */}
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-bold text-[var(--text-primary)] truncate">
+          <h1 className="text-xl font-semibold text-[var(--text-primary)] truncate">
             {fullName}
           </h1>
           <div className="flex items-center gap-2 mt-2">
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                 role === "service_provider"
                   ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
                   : role === "customer"
@@ -66,7 +72,7 @@ export function UserProfileCard({
             </span>
             {status && (
               <span
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   status === "active"
                     ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"
                     : "bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300"
@@ -87,6 +93,7 @@ export function UserProfileCard({
             </code>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

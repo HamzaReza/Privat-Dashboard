@@ -21,7 +21,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[hsl(var(--border-hsl))/0.5] bg-[hsl(var(--background-hsl))/0.9] backdrop-blur-md">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
         <Link href="/" className="flex items-center">
-          <img src="/privat-logo.png" alt="PRIVAT" className="h-32" />
+          <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-8 w-auto" />
         </Link>
 
         {/* Desktop */}

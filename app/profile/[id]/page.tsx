@@ -21,6 +21,7 @@ import {
   RiLogoutBoxLine,
   RiMailLine,
   RiPhoneLine,
+  RiUserLine,
 } from "react-icons/ri";
 
 export default function ProfilePage() {
@@ -93,7 +94,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!authChecked) return;
     fetchUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, authChecked]);
 
   useEffect(() => {
@@ -148,10 +149,10 @@ export default function ProfilePage() {
   if (!authChecked || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <RiLoader4Line
-          className="animate-spin text-[var(--primary)]"
-          size={32}
-        />
+        <div className="relative w-10 h-10">
+          <div className="absolute inset-0 rounded-full border-2 border-[var(--primary)]/20 border-t-[var(--primary)] animate-spin" />
+          <div className="absolute inset-2 rounded-full bg-[var(--primary)]/10 blur-sm" />
+        </div>
       </div>
     );
   }
@@ -190,17 +191,25 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] font-body">
+    <div className="relative min-h-screen bg-[var(--background)]">
+      {/* Ambient gold glow */}
+      <div
+        className="pointer-events-none fixed inset-0 overflow-hidden"
+        aria-hidden
+      >
+        <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-[var(--primary)]/[0.05] blur-3xl" />
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-[hsl(var(--border-hsl))/0.5] bg-[hsl(var(--background-hsl))/0.9] backdrop-blur-md">
-        <div className="max-w-screen-lg mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[hsl(var(--background-hsl))/0.85] backdrop-blur-xl">
+        <div className="w-full px-6 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img src="/privat-logo.png" alt="PRIVAT" className="h-40" />
+            <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-7 w-auto" />
           </Link>
           <button
             onClick={handleSignOut}
             disabled={signingOut}
-            className="flex items-center gap-2 px-3 py-2 rounded-sm border border-[hsl(var(--border-hsl))/0.5] text-[hsl(var(--muted-foreground-hsl))] text-sm font-body hover:border-[hsl(var(--primary-hsl))] hover:text-[hsl(var(--primary-hsl))] transition-colors disabled:opacity-60 cursor-pointer"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-[hsl(var(--border-hsl))/0.5] text-[hsl(var(--muted-foreground-hsl))] text-sm hover:border-[hsl(var(--primary-hsl))/0.6] hover:text-[hsl(var(--primary-hsl))] transition-all duration-200 disabled:opacity-60 cursor-pointer"
           >
             {signingOut ? (
               <RiLoader4Line className="animate-spin" size={15} />
@@ -210,55 +219,109 @@ export default function ProfilePage() {
             <span>Sign out</span>
           </button>
         </div>
+        {/* Gold gradient separator */}
+        <div className="h-px bg-gradient-to-r from-transparent via-[var(--primary)]/30 to-transparent" />
       </header>
 
       {/* Content */}
-      <main className="max-w-screen-lg mx-auto px-6 py-8 space-y-6">
-        <UserProfileCard user={user} isCurrentUserAdmin={isCurrentUserAdmin} />
+      <main className="relative w-full px-6 py-10 space-y-6">
+        <div className="slide-up">
+          <UserProfileCard
+            user={user}
+            isCurrentUserAdmin={isCurrentUserAdmin}
+          />
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <InfoCard
-            icon={<RiMailLine size={16} />}
-            label="Email"
-            value={user.email ?? "—"}
-            badge={
-              meta.email_verified === true ? (
-                <span className="text-green-600 dark:text-green-400 text-xs flex items-center gap-1">
-                  <RiCheckLine size={14} /> Verified
-                </span>
-              ) : meta.email_verified === false ? (
-                <span className="text-yellow-600 dark:text-yellow-400 text-xs flex items-center gap-1">
-                  <RiCloseLine size={14} /> Unverified
-                </span>
-              ) : undefined
-            }
-          />
-          <InfoCard
-            icon={<RiPhoneLine size={16} />}
-            label="Phone"
-            value={meta.phone ?? "—"}
-          />
-          <InfoCard
-            icon={<RiCalendarLine size={16} />}
-            label="Joined"
-            value={formatDate(user.created_at)}
-          />
-          <div
-            className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-4 flex items-start gap-3"
-            style={{ boxShadow: "var(--shadow-sm)" }}
-          >
-            <div className="w-8 h-8 rounded-xl bg-[var(--surface-alt)] flex items-center justify-center text-[var(--primary)] flex-shrink-0 mt-0.5">
-              <RiLoginBoxLine size={16} />
+        {/* Account Details — unified panel */}
+        <div
+          className="slide-up bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden"
+          style={{ animationDelay: "0.08s", boxShadow: "var(--shadow-sm)" }}
+        >
+          <div className="h-px bg-gradient-to-r from-transparent via-[var(--primary)]/40 to-transparent" />
+
+          {/* Header */}
+          <div className="flex items-center gap-2.5 px-6 pt-5 pb-4">
+            <div className="w-7 h-7 rounded-lg bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center">
+              <RiUserLine size={14} className="text-[var(--primary)]" />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-semibold mb-1">
-                Auth Providers
-              </p>
-              {appMeta.providers &&
-              Array.isArray(appMeta.providers) &&
-              appMeta.providers.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5">
-                  {appMeta.providers.map((provider: unknown) => (
+            <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">
+              Account Details
+            </h2>
+          </div>
+
+          {/* 2-column grid */}
+          <div className="grid grid-cols-2 border-t border-[var(--border)]/60">
+            {/* Email */}
+            <div className="px-6 py-4 border-r border-[var(--border)]/60 hover:bg-[var(--surface-alt)]/50 transition-colors">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-md bg-[var(--surface-alt)] flex items-center justify-center text-[var(--primary)] flex-shrink-0">
+                  <RiMailLine size={12} />
+                </div>
+                <span className="text-xs font-medium text-[var(--text-tertiary)]">
+                  Email
+                </span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[15px] text-[var(--text-primary)] break-all">
+                  {user.email ?? "—"}
+                </span>
+                {meta.email_verified === true ? (
+                  <span className="text-green-600 dark:text-green-400 text-xs flex items-center gap-0.5 flex-shrink-0">
+                    <RiCheckLine size={12} /> Verified
+                  </span>
+                ) : meta.email_verified === false ? (
+                  <span className="text-yellow-600 dark:text-yellow-400 text-xs flex items-center gap-0.5 flex-shrink-0">
+                    <RiCloseLine size={12} /> Unverified
+                  </span>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="px-6 py-4 hover:bg-[var(--surface-alt)]/50 transition-colors">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-md bg-[var(--surface-alt)] flex items-center justify-center text-[var(--primary)] flex-shrink-0">
+                  <RiPhoneLine size={12} />
+                </div>
+                <span className="text-xs font-medium text-[var(--text-tertiary)]">
+                  Phone
+                </span>
+              </div>
+              <span className="text-[15px] text-[var(--text-primary)]">
+                {(meta.phone as string | undefined) ?? "—"}
+              </span>
+            </div>
+
+            {/* Joined */}
+            <div className="px-6 py-4 border-t border-r border-[var(--border)]/60 hover:bg-[var(--surface-alt)]/50 transition-colors">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-md bg-[var(--surface-alt)] flex items-center justify-center text-[var(--primary)] flex-shrink-0">
+                  <RiCalendarLine size={12} />
+                </div>
+                <span className="text-xs font-medium text-[var(--text-tertiary)]">
+                  Joined
+                </span>
+              </div>
+              <span className="text-[15px] text-[var(--text-primary)]">
+                {formatDate(user.created_at)}
+              </span>
+            </div>
+
+            {/* Auth Providers */}
+            <div className="px-6 py-4 border-t border-[var(--border)]/60 hover:bg-[var(--surface-alt)]/50 transition-colors">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-md bg-[var(--surface-alt)] flex items-center justify-center text-[var(--primary)] flex-shrink-0">
+                  <RiLoginBoxLine size={12} />
+                </div>
+                <span className="text-xs font-medium text-[var(--text-tertiary)]">
+                  Auth
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {appMeta.providers &&
+                Array.isArray(appMeta.providers) &&
+                appMeta.providers.length > 0 ? (
+                  appMeta.providers.map((provider: unknown) => (
                     <span
                       key={provider as string}
                       className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/30"
@@ -267,96 +330,76 @@ export default function ProfilePage() {
                         ? provider.charAt(0).toUpperCase() + provider.slice(1)
                         : (provider as string)}
                     </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-[var(--text-secondary)]">—</p>
-              )}
+                  ))
+                ) : (
+                  <span className="text-[15px] text-[var(--text-secondary)]">
+                    —
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {isServiceProvider && <ServiceProviderInfo meta={meta} />}
+        {isServiceProvider && (
+          <div className="slide-up" style={{ animationDelay: "0.15s" }}>
+            <ServiceProviderInfo meta={meta} />
+          </div>
+        )}
 
         {isServiceProvider && (isViewingOwnProfile || isCurrentUserAdmin) && (
-          <CreditHistorySection
-            userId={id}
-            creditHistory={
-              (meta.creditHistory as {
-                type: string;
-                amount: number;
-                createdAt: string;
-                description: string;
-              }[]) ?? []
-            }
-            onAdded={() => {
-              const prevCredits = (meta.credits as number) ?? 0;
-              const started = Date.now();
-              const poll = async () => {
-                if (Date.now() - started > 30000) return; // give up after 30s
-                try {
-                  const res = await fetch(`/api/users/${id}`);
-                  if (res.ok) {
-                    const json: UserDetailsResponse = await res.json();
-                    const newCredits =
-                      (json.user?.user_metadata?.credits as number) ?? 0;
-                    if (newCredits > prevCredits) {
-                      setData(json);
-                      return;
+          <div className="slide-up" style={{ animationDelay: "0.2s" }}>
+            <CreditHistorySection
+              userId={id}
+              creditHistory={
+                (meta.creditHistory as {
+                  type: string;
+                  amount: number;
+                  createdAt: string;
+                  description: string;
+                }[]) ?? []
+              }
+              onAdded={() => {
+                const prevCredits = (meta.credits as number) ?? 0;
+                const started = Date.now();
+                const poll = async () => {
+                  if (Date.now() - started > 30000) return; // give up after 30s
+                  try {
+                    const res = await fetch(`/api/users/${id}`);
+                    if (res.ok) {
+                      const json: UserDetailsResponse = await res.json();
+                      const newCredits =
+                        (json.user?.user_metadata?.credits as number) ?? 0;
+                      if (newCredits > prevCredits) {
+                        setData(json);
+                        return;
+                      }
                     }
-                  }
-                } catch {}
+                  } catch {}
+                  setTimeout(poll, 2000);
+                };
                 setTimeout(poll, 2000);
-              };
-              setTimeout(poll, 2000);
-            }}
-            isViewingOwn={isViewingOwnProfile}
-          />
+              }}
+              isViewingOwn={isViewingOwnProfile}
+            />
+          </div>
         )}
 
         {isCustomer && (
-          <CustomerJobsSection jobs={jobs} loading={jobsLoading} />
+          <div className="slide-up" style={{ animationDelay: "0.15s" }}>
+            <CustomerJobsSection jobs={jobs} loading={jobsLoading} />
+          </div>
         )}
 
         {isServiceProvider && (
-          <ProviderJobsSection
-            jobs={providerJobs}
-            loading={providerJobsLoading}
-          />
+          <div className="slide-up" style={{ animationDelay: "0.25s" }}>
+            <ProviderJobsSection
+              jobs={providerJobs}
+              loading={providerJobsLoading}
+            />
+          </div>
         )}
       </main>
-    </div>
-  );
-}
-
-function InfoCard({
-  icon,
-  label,
-  value,
-  badge,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  badge?: React.ReactNode;
-}) {
-  return (
-    <div
-      className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-4 flex items-start gap-3"
-      style={{ boxShadow: "var(--shadow-sm)" }}
-    >
-      <div className="w-8 h-8 rounded-xl bg-[var(--surface-alt)] flex items-center justify-center text-[var(--primary)] flex-shrink-0 mt-0.5">
-        {icon}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 mb-0.5">
-          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-semibold">
-            {label}
-          </p>
-          {badge && <div>{badge}</div>}
-        </div>
-        <p className="text-sm text-[var(--text-primary)] break-all">{value}</p>
-      </div>
     </div>
   );
 }
