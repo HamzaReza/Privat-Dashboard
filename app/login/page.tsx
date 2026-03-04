@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import {
@@ -249,6 +250,16 @@ function SignInForm() {
                 {loading ? "Signing in…" : "Sign in"}
               </button>
             </form>
+
+            <p className="text-center text-[13px] text-[var(--text-tertiary)] mt-6">
+              Don&apos;t have an account?{" "}
+              <Link
+                href={`/register/${loginAs === "provider" ? "provider" : "customer"}`}
+                className="text-[var(--primary)] hover:text-[var(--primary-light)] font-medium transition-colors"
+              >
+                Sign up
+              </Link>
+            </p>
           </div>
         </div>
       </div>
