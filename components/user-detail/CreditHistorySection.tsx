@@ -2,6 +2,7 @@
 
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   RiAddLine,
   RiCloseLine,
@@ -221,7 +222,7 @@ function AddCreditsModal({
     }
   };
 
-  return (
+  return createPortal(
     <div
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -231,7 +232,7 @@ function AddCreditsModal({
       }}
     >
       <div
-        className="w-full max-w-md bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden"
+        className="w-full max-w-md bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden flex flex-col max-h-[90vh]"
         style={{ boxShadow: "var(--shadow-xl)" }}
       >
         {/* Header */}
@@ -251,7 +252,7 @@ function AddCreditsModal({
         </div>
 
         {/* Packages */}
-        <div className="p-6 space-y-2.5">
+        <div className="p-6 space-y-2.5 overflow-y-auto flex-1">
           {PACKAGES.map((pkg) => (
             <button
               key={pkg.id}
@@ -321,6 +322,7 @@ function AddCreditsModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -29,6 +29,10 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Privat — Premium Maintenance, On Demand",
   description: "Privat connects discerning customers with verified maintenance professionals. Request a service in minutes. Verified providers. Fast quotes. Full control.",
+  icons: {
+    icon: "/privat-logo.png",
+    apple: "/privat-logo.png",
+  },
 };
 
 export default function RootLayout({
