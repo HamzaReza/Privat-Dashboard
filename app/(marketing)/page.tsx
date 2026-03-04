@@ -19,13 +19,13 @@ const Hero = () => (
       </p>
       <div className="mt-10 flex flex-col items-center justify-center gap-4 fade-in sm:flex-row" style={{ animationDelay: "0.5s" }}>
         <Link
-          href="/login"
+          href="/login?role=customer"
           className="inline-flex h-12 items-center gap-2 rounded-sm bg-gold-gradient px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-foreground-hsl))] transition-all hover:shadow-lg hover:shadow-[hsl(42,60%,35%)/0.3]"
         >
           Request a Service
         </Link>
         <Link
-          href="/login"
+          href="/login?role=provider"
           className="inline-flex h-12 items-center gap-2 rounded-sm border border-[hsl(var(--primary-hsl))] px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-hsl))] transition-all hover:bg-[hsl(var(--primary-hsl))/0.1]"
         >
           Join as a Provider
@@ -232,13 +232,13 @@ const FinalCTA = () => (
       </p>
       <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <Link
-          href="/login"
+          href="/login?role=customer"
           className="inline-flex h-12 items-center gap-2 rounded-sm bg-gold-gradient px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-foreground-hsl))] transition-all hover:shadow-lg"
         >
           Request a Service <ArrowRight size={18} />
         </Link>
         <Link
-          href="/login"
+          href="/login?role=provider"
           className="inline-flex h-12 items-center gap-2 rounded-sm border border-[hsl(var(--primary-hsl))] px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-hsl))] transition-all hover:bg-[hsl(var(--primary-hsl))/0.1]"
         >
           Join as a Provider

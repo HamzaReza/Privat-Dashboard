@@ -35,7 +35,7 @@ export default function ForCustomers() {
             Post a request, receive quotes from verified professionals, and choose with confidence.
           </p>
           <Link
-            href="/login"
+            href="/login?role=customer"
             className="mt-8 inline-flex h-12 items-center gap-2 rounded-sm bg-gold-gradient px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-foreground-hsl))] transition-all hover:shadow-lg"
           >
             Request a Service <ArrowRight size={18} />
@@ -103,7 +103,7 @@ export default function ForCustomers() {
             Your first request takes less than two minutes.
           </p>
           <Link
-            href="/login"
+            href="/login?role=customer"
             className="mt-8 inline-flex h-12 items-center gap-2 rounded-sm bg-gold-gradient px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-foreground-hsl))] transition-all hover:shadow-lg"
           >
             Request a Service <ArrowRight size={18} />

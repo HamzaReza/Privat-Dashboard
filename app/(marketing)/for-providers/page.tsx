@@ -29,7 +29,7 @@ export default function ForProviders() {
             Join a verified marketplace of high-intent clients. No monthly fees — pay only for leads you want.
           </p>
           <Link
-            href="/login"
+            href="/login?role=provider"
             className="mt-8 inline-flex h-12 items-center gap-2 rounded-sm bg-gold-gradient px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-foreground-hsl))] transition-all hover:shadow-lg"
           >
             Apply as a Provider <ArrowRight size={18} />
@@ -91,7 +91,7 @@ export default function ForProviders() {
             Submit your application and our team will review it within 48 hours.
           </p>
           <Link
-            href="/login"
+            href="/login?role=provider"
             className="mt-8 inline-flex h-12 items-center gap-2 rounded-sm bg-gold-gradient px-8 text-sm font-semibold tracking-widest-marketing uppercase text-[hsl(var(--primary-foreground-hsl))] transition-all hover:shadow-lg"
           >
             Apply Now <ArrowRight size={18} />
