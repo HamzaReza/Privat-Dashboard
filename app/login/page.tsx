@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   RiEyeLine,
@@ -14,13 +14,16 @@ import {
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
-  const [loginAs, setLoginAs] = useState<"customer" | "provider">("customer");
+  const [loginAs, setLoginAs] = useState<"customer" | "provider">(
+    searchParams.get("role") === "provider" ? "provider" : "customer"
+  );
 
   useEffect(() => {
     const checkSession = async () => {

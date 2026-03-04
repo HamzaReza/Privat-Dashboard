@@ -6,6 +6,7 @@ const footerLinks = [
     links: [
       { label: "For Customers", href: "/for-customers" },
       { label: "For Providers", href: "/for-providers" },
+      { label: "Pricing", href: "/pricing" },
       { label: "FAQ", href: "/faq" },
     ],
   },
@@ -16,6 +17,7 @@ const footerLinks = [
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
       { label: "Cookie Policy", href: "/cookies" },
+      { label: "Refund Policy", href: "/refunds" },
     ],
   },
 ];
