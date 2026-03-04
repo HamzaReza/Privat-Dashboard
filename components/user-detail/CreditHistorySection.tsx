@@ -1,5 +1,6 @@
 "use client";
 
+import { PACKAGES } from "@/constants/packages";
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -9,7 +10,6 @@ import {
   RiCoinsLine,
   RiLoader4Line,
 } from "react-icons/ri";
-import { PACKAGES } from "@/constants/packages";
 
 interface CreditHistoryEntry {
   type: string;
@@ -318,11 +318,11 @@ function AddCreditsModal({
             className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {saving && <RiLoader4Line className="animate-spin" size={15} />}
-            {saving ? "Opening…" : "Buy with Paddle"}
+            {saving ? "Opening…" : "Buy"}
           </button>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
