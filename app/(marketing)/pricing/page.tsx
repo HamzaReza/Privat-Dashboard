@@ -9,7 +9,7 @@ const packageMeta: Record<
 > = {
   starter: {
     tagline: "Just getting started",
-    desc: "Explore the platform and unlock your first leads with no commitment.",
+    desc: "Explore the platform and purchase your first credits with no commitment.",
   },
   small: {
     tagline: "Occasional projects",
@@ -78,15 +78,16 @@ export default function PricingPage() {
             Transparent Pricing
           </p>
           <h1 className="mx-auto max-w-2xl text-3xl font-heading font-semibold leading-tight tracking-widest-marketing uppercase md:text-5xl lg:text-6xl slide-up">
-            Pay only for{" "}
-            <span className="text-gold-gradient">leads you want.</span>
+            Buy credits,{" "}
+            <span className="text-gold-gradient">win jobs.</span>
           </h1>
           <p
             className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-[hsl(var(--muted-foreground-hsl))] fade-in lg:text-lg"
             style={{ animationDelay: "0.3s" }}
           >
-            No monthly fees. No subscriptions. Buy a credit pack once and unlock
-            high-intent service requests whenever you&apos;re ready.
+            No monthly fees. No subscriptions. Purchase a credit pack once and
+            use them to access high-intent service requests whenever you&apos;re
+            ready.
           </p>
           <GoldDivider className="mt-10" />
         </div>
@@ -110,9 +111,9 @@ export default function PricingPage() {
 
           <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-3">
             {[
-              { num: "01", title: "Browse requests", desc: "See all open service requests in your categories — for free." },
-              { num: "02", title: "Spend a credit", desc: "Unlock the customer's contact info and full job details." },
-              { num: "03", title: "Win the job", desc: "Reach out directly, send your quote, and close the deal." },
+              { num: "01", title: "Buy credits", desc: "Choose a pack that fits your goals and purchase credits in one payment." },
+              { num: "02", title: "Browse requests", desc: "See all open service requests in your categories — for free." },
+              { num: "03", title: "Spend & win", desc: "Use a credit to unlock full contact details, reach out, and close the deal." },
             ].map((step) => (
               <div key={step.num} className="text-center">
                 <span className="text-3xl font-heading font-semibold text-gold-gradient">
@@ -141,7 +142,7 @@ export default function PricingPage() {
               <span className="text-gold-gradient">Credit Packs</span>
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-[hsl(var(--muted-foreground-hsl))] lg:text-base">
-              Choose the pack that fits your pipeline. Bigger packs unlock a
+              Choose the pack that fits your pipeline. Bigger packs give you a
               better rate per credit.
             </p>
           </div>
@@ -225,7 +226,7 @@ export default function PricingPage() {
                     {/* highlights */}
                     <ul className="mt-5 space-y-2">
                       {[
-                        `${pkg.credits} lead unlocks`,
+                        `${pkg.credits} credits`,
                         "Credits never expire",
                         "All service categories",
                       ].map((item) => (
@@ -309,7 +310,7 @@ export default function PricingPage() {
                 },
                 {
                   q: "Can I browse requests without spending credits?",
-                  a: "Yes. You can see available service requests in your categories for free. Credits are only spent when you choose to unlock a specific lead.",
+                  a: "Yes. You can see available service requests in your categories for free. Credits are only spent when you choose to access a specific request.",
                 },
                 {
                   q: "What happens if I run out of credits?",
@@ -317,7 +318,7 @@ export default function PricingPage() {
                 },
                 {
                   q: "Are refunds available?",
-                  a: "Unused credits can be refunded within 14 days of purchase. Once a credit is used to unlock a lead, it cannot be refunded.",
+                  a: "Unused credits can be refunded within 14 days of purchase. Once a credit has been spent, it cannot be refunded.",
                 },
               ].map((faq) => (
                 <div
@@ -341,7 +342,7 @@ export default function PricingPage() {
       <section className="border-t border-[hsl(var(--border-hsl))/0.5] bg-[hsl(var(--background-hsl))] py-20">
         <div className="container mx-auto px-4 text-center lg:px-8">
           <h2 className="text-2xl font-heading font-semibold tracking-widest-marketing uppercase md:text-3xl">
-            <span className="text-gold-gradient">Ready to unlock leads?</span>
+            <span className="text-gold-gradient">Ready to buy credits?</span>
           </h2>
           <p className="mx-auto mt-4 max-w-md text-base text-[hsl(var(--muted-foreground-hsl))]">
             Create an account, get verified, and choose the pack that fits your

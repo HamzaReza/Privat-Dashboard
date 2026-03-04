@@ -1,6 +1,6 @@
 import { AuthWatcher } from "@/components/AuthWatcher";
 import type { Metadata } from "next";
-import { Space_Grotesk, Geist_Mono, Cinzel, Outfit } from "next/font/google";
+import { Cinzel, Geist_Mono, Outfit, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -27,8 +27,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Privat Dashboard",
-  description: "Admin dashboard for Privat",
+  title: "Privat — Premium Maintenance, On Demand",
+  description: "Privat connects discerning customers with verified maintenance professionals. Request a service in minutes. Verified providers. Fast quotes. Full control.",
 };
 
 export default function RootLayout({
