@@ -1,4 +1,4 @@
-import { RiUserLine, RiShieldLine } from "react-icons/ri";
+import { RiEditLine, RiShieldLine, RiUserLine } from "react-icons/ri";
 
 interface UserProfileCardProps {
   user: {
@@ -8,11 +8,15 @@ interface UserProfileCardProps {
     app_metadata?: Record<string, unknown>;
   };
   isCurrentUserAdmin: boolean;
+  isViewingOwnProfile?: boolean;
+  onEdit?: () => void;
 }
 
 export function UserProfileCard({
   user,
   isCurrentUserAdmin,
+  isViewingOwnProfile,
+  onEdit,
 }: UserProfileCardProps) {
   const meta = user.user_metadata ?? {};
   const fullName = (meta.full_name ?? meta.name ?? "—") as string;
@@ -83,6 +87,17 @@ export function UserProfileCard({
             )}
           </div>
         </div>
+
+        {/* Edit button (own profile only) */}
+        {isViewingOwnProfile && onEdit && (
+          <button
+            onClick={onEdit}
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--primary)]/30 text-[var(--primary)] text-xs font-medium hover:bg-[var(--primary)]/10 transition-colors cursor-pointer"
+          >
+            <RiEditLine size={13} />
+            Edit
+          </button>
+        )}
 
         {/* User ID (admin only) */}
         {isCurrentUserAdmin && (

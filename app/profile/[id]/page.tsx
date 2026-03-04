@@ -2,6 +2,7 @@
 
 import { CreditHistorySection } from "@/components/user-detail/CreditHistorySection";
 import { CustomerJobsSection } from "@/components/user-detail/CustomerJobsSection";
+import { EditProfileModal } from "@/components/user-detail/EditProfileModal";
 import { ProviderJobsSection } from "@/components/user-detail/ProviderJobsSection";
 import { ServiceProviderInfo } from "@/components/user-detail/ServiceProviderInfo";
 import { UserProfileCard } from "@/components/user-detail/UserProfileCard";
@@ -46,6 +47,7 @@ export default function ProfilePage() {
   }>({ leads: [], quotes: [], active: [], completed: [] });
   const [jobsLoading, setJobsLoading] = useState(false);
   const [providerJobsLoading, setProviderJobsLoading] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   // Auth check — must be viewing own profile, not admin
   useEffect(() => {
@@ -192,6 +194,28 @@ export default function ProfilePage() {
 
   return (
     <div className="relative min-h-screen bg-[var(--background)]">
+      {editModalOpen && (
+        <EditProfileModal
+          userId={id}
+          role={role}
+          currentValues={{
+            full_name: (meta.full_name ?? meta.name) as string | undefined,
+            phone: meta.phone as string | undefined,
+            avatar_url: meta.avatar_url as string | undefined,
+            businessName: meta.businessName as string | undefined,
+            businessPhone: meta.businessPhone as string | undefined,
+            serviceArea: meta.serviceArea as string | undefined,
+            latitude: meta.latitude as number | undefined,
+            longitude: meta.longitude as number | undefined,
+            categories: meta.categories as string[] | undefined,
+          }}
+          onClose={() => setEditModalOpen(false)}
+          onSaved={() => {
+            setEditModalOpen(false);
+            fetchUser();
+          }}
+        />
+      )}
       {/* Ambient gold glow */}
       <div
         className="pointer-events-none fixed inset-0 overflow-hidden"
@@ -229,6 +253,8 @@ export default function ProfilePage() {
           <UserProfileCard
             user={user}
             isCurrentUserAdmin={isCurrentUserAdmin}
+            isViewingOwnProfile={isViewingOwnProfile}
+            onEdit={() => setEditModalOpen(true)}
           />
         </div>
 
