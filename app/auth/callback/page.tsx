@@ -17,10 +17,12 @@ async function handleRouting(
   const meta = user.user_metadata || {};
   console.log("🚀 ~ page.tsx:18 ~ handleRouting ~ meta:", meta);
 
+  const signOutSafe = async () => { try { await supabase.auth.signOut(); } catch {} };
+
   if (role === "customer") {
     // Wrong role → reject
     if (meta.role === "service_provider" || meta.role === "admin") {
-      await supabase.auth.signOut();
+      await signOutSafe();
       router.replace("/login?error=role_mismatch");
       return;
     }
@@ -38,7 +40,7 @@ async function handleRouting(
   } else if (role === "provider") {
     // Wrong role → reject (check BEFORE incomplete profile check)
     if (meta.role === "customer" || meta.role === "admin") {
-      await supabase.auth.signOut();
+      await signOutSafe();
       router.replace("/login?error=role_mismatch");
       return;
     }
@@ -55,12 +57,12 @@ async function handleRouting(
     }
     // Existing provider — check approval status
     if (meta.status === "pending") {
-      await supabase.auth.signOut();
+      await signOutSafe();
       router.replace("/login?error=account_pending");
       return;
     }
     if (meta.status === "blocked") {
-      await supabase.auth.signOut();
+      await signOutSafe();
       router.replace("/login?error=account_blocked");
       return;
     }
@@ -86,7 +88,11 @@ function CallbackHandler() {
     const handle = async (user: NonNullable<unknown>) => {
       if (handled) return;
       handled = true;
-      await handleRouting(user, role, router);
+      try {
+        await handleRouting(user, role, router);
+      } catch {
+        router.replace("/login?error=oauth_failed");
+      }
     };
 
     // detectSessionInUrl:true (Supabase default) auto-exchanges the code and fires SIGNED_IN.
