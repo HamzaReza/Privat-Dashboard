@@ -14,6 +14,8 @@ export function createClient() {
     );
   }
 
-  client = createSupabaseClient(url, anonKey);
+  client = createSupabaseClient(url, anonKey, {
+    auth: { flowType: "pkce" },
+  });
   return client;
 }
