@@ -6,7 +6,13 @@ import { Suspense, useEffect } from "react";
 import { RiLoader4Line } from "react-icons/ri";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleRouting(user: any, role: string, router: ReturnType<typeof useRouter>) {
+async function handleRouting(
+  user: any,
+  role: string,
+  router: ReturnType<typeof useRouter>,
+) {
+  console.log("🚀 ~ page.tsx:10 ~ handleRouting ~ role:", role);
+  console.log("🚀 ~ page.tsx:10 ~ handleRouting ~ user:", user);
   const supabase = createClient();
   const meta = user.user_metadata || {};
 
@@ -28,7 +34,6 @@ async function handleRouting(user: any, role: string, router: ReturnType<typeof 
       });
     }
     router.replace(`/profile/${user.id}?role=customer`);
-
   } else if (role === "provider") {
     // Wrong role → reject (check BEFORE incomplete profile check)
     if (meta.role === "customer" || meta.role === "admin") {
@@ -39,9 +44,11 @@ async function handleRouting(user: any, role: string, router: ReturnType<typeof 
     // New user (no role) or incomplete provider profile → complete details
     if (!meta.role || !meta.businessName) {
       const googleName = encodeURIComponent(meta.full_name || meta.name || "");
-      const googleAvatar = encodeURIComponent(meta.picture || meta.avatar_url || "");
+      const googleAvatar = encodeURIComponent(
+        meta.picture || meta.avatar_url || "",
+      );
       router.replace(
-        `/register/provider/google-complete?googleName=${googleName}&googleAvatar=${googleAvatar}`
+        `/register/provider/google-complete?googleName=${googleName}&googleAvatar=${googleAvatar}`,
       );
       return;
     }
@@ -57,7 +64,6 @@ async function handleRouting(user: any, role: string, router: ReturnType<typeof 
       return;
     }
     router.replace(`/profile/${user.id}?role=provider`);
-
   } else {
     router.replace("/login");
   }
@@ -68,7 +74,10 @@ function CallbackHandler() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const role = searchParams.get("role") ?? localStorage.getItem("oauth_role") ?? "customer";
+    const role =
+      searchParams.get("role") ??
+      localStorage.getItem("oauth_role") ??
+      "customer";
     localStorage.removeItem("oauth_role");
     const supabase = createClient();
     let handled = false;
@@ -81,13 +90,13 @@ function CallbackHandler() {
 
     // detectSessionInUrl:true (Supabase default) auto-exchanges the code and fires SIGNED_IN.
     // We listen for that event instead of calling exchangeCodeForSession manually.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === "SIGNED_IN" && session?.user) {
-          await handle(session.user);
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        await handle(session.user);
       }
-    );
+    });
 
     // Also check immediately in case SIGNED_IN already fired before subscription was set up
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -112,8 +121,13 @@ function CallbackHandler() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
       <div className="flex flex-col items-center gap-3">
-        <RiLoader4Line className="animate-spin text-[var(--primary)]" size={28} />
-        <p className="text-[13px] text-[var(--text-tertiary)]">Signing you in…</p>
+        <RiLoader4Line
+          className="animate-spin text-[var(--primary)]"
+          size={28}
+        />
+        <p className="text-[13px] text-[var(--text-tertiary)]">
+          Signing you in…
+        </p>
       </div>
     </div>
   );
