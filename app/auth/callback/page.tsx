@@ -23,7 +23,7 @@ async function handleRouting(
     // Wrong role → reject
     if (meta.role === "service_provider" || meta.role === "admin") {
       await signOutSafe();
-      router.replace("/login?error=role_mismatch");
+      window.location.replace("/login?error=role_mismatch");
       return;
     }
     // New user → assign customer role + Google profile data
@@ -41,7 +41,7 @@ async function handleRouting(
     // Wrong role → reject (check BEFORE incomplete profile check)
     if (meta.role === "customer" || meta.role === "admin") {
       await signOutSafe();
-      router.replace("/login?error=role_mismatch");
+      window.location.replace("/login?error=role_mismatch");
       return;
     }
     // New user (no role) or incomplete provider profile → complete details
@@ -58,17 +58,17 @@ async function handleRouting(
     // Existing provider — check approval status
     if (meta.status === "pending") {
       await signOutSafe();
-      router.replace("/login?error=account_pending");
+      window.location.replace("/login?error=account_pending");
       return;
     }
     if (meta.status === "blocked") {
       await signOutSafe();
-      router.replace("/login?error=account_blocked");
+      window.location.replace("/login?error=account_blocked");
       return;
     }
     router.replace(`/profile/${user.id}?role=provider`);
   } else {
-    router.replace("/login");
+    window.location.replace("/login");
   }
 }
 
@@ -91,7 +91,7 @@ function CallbackHandler() {
       try {
         await handleRouting(user, role, router);
       } catch {
-        router.replace("/login?error=oauth_failed");
+        window.location.replace("/login?error=oauth_failed");
       }
     };
 
