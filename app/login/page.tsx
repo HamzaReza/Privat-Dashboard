@@ -143,7 +143,6 @@ function SignInForm() {
     setGoogleLoading(true);
     try {
       localStorage.setItem("oauth_role", loginAs);
-      document.cookie = `oauth_role=${loginAs}; max-age=300; path=/; SameSite=Lax`;
       const supabase = createClient();
       await supabase.auth.signInWithOAuth({
         provider: "google",
