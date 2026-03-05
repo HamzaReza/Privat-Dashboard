@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
@@ -5,19 +6,20 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import { RiLoader4Line } from "react-icons/ri";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleRouting(
   user: any,
   role: string,
   router: ReturnType<typeof useRouter>,
 ) {
-  console.log("🚀 ~ page.tsx:10 ~ handleRouting ~ role:", role);
-  console.log("🚀 ~ page.tsx:10 ~ handleRouting ~ user:", user);
   const supabase = createClient();
   const meta = user.user_metadata || {};
   console.log("🚀 ~ page.tsx:18 ~ handleRouting ~ meta:", meta);
 
-  const signOutSafe = async () => { try { await supabase.auth.signOut(); } catch {} };
+  const signOutSafe = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch {}
+  };
 
   if (role === "customer") {
     // Wrong role → reject
