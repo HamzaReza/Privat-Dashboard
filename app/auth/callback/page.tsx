@@ -13,7 +13,6 @@ async function handleRouting(
 ) {
   const supabase = createClient();
   const meta = user.user_metadata || {};
-  console.log("🚀 ~ page.tsx:18 ~ handleRouting ~ meta:", meta);
 
   const signOutSafe = async () => {
     try {
@@ -25,7 +24,7 @@ async function handleRouting(
     // Wrong role → reject
     if (meta.role === "service_provider" || meta.role === "admin") {
       await signOutSafe();
-      window.location.replace("/login?error=role_mismatch");
+      router.replace("/login?error=role_mismatch");
       return;
     }
     // New user → assign customer role + Google profile data
@@ -43,7 +42,7 @@ async function handleRouting(
     // Wrong role → reject (check BEFORE incomplete profile check)
     if (meta.role === "customer" || meta.role === "admin") {
       await signOutSafe();
-      window.location.replace("/login?error=role_mismatch");
+      router.replace("/login?error=role_mismatch");
       return;
     }
     // New user (no role) or incomplete provider profile → complete details
@@ -60,17 +59,17 @@ async function handleRouting(
     // Existing provider — check approval status
     if (meta.status === "pending") {
       await signOutSafe();
-      window.location.replace("/login?error=account_pending");
+      router.replace("/login?error=account_pending");
       return;
     }
     if (meta.status === "blocked") {
       await signOutSafe();
-      window.location.replace("/login?error=account_blocked");
+      router.replace("/login?error=account_blocked");
       return;
     }
     router.replace(`/profile/${user.id}?role=provider`);
   } else {
-    window.location.replace("/login");
+    router.replace("/login");
   }
 }
 
@@ -79,51 +78,23 @@ function CallbackHandler() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const role =
-      searchParams.get("role") ??
-      localStorage.getItem("oauth_role") ??
-      "customer";
-    localStorage.removeItem("oauth_role");
-    const supabase = createClient();
-    let handled = false;
-
-    const handle = async (user: NonNullable<unknown>) => {
-      if (handled) return;
-      handled = true;
-      try {
-        await handleRouting(user, role, router);
-      } catch {
-        window.location.replace("/login?error=oauth_failed");
-      }
-    };
-
-    // detectSessionInUrl:true (Supabase default) auto-exchanges the code and fires SIGNED_IN.
-    // We listen for that event instead of calling exchangeCodeForSession manually.
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session?.user) {
-        await handle(session.user);
-      }
-    });
-
-    // Also check immediately in case SIGNED_IN already fired before subscription was set up
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) handle(session.user);
-    });
-
-    // Timeout fallback — if no session after 10 seconds, something went wrong
-    const timeout = setTimeout(() => {
-      if (!handled) {
-        handled = true;
+    const run = async () => {
+      const role =
+        searchParams.get("role") ??
+        localStorage.getItem("oauth_role") ??
+        "customer";
+      localStorage.removeItem("oauth_role");
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.user) {
         router.replace("/login?error=oauth_failed");
+        return;
       }
-    }, 10_000);
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
+      await handleRouting(session.user, role, router);
     };
+    run().catch(() => router.replace("/login?error=oauth_failed"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
