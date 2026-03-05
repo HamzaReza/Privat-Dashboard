@@ -15,6 +15,7 @@ async function handleRouting(
   console.log("🚀 ~ page.tsx:10 ~ handleRouting ~ user:", user);
   const supabase = createClient();
   const meta = user.user_metadata || {};
+  console.log("🚀 ~ page.tsx:18 ~ handleRouting ~ meta:", meta);
 
   if (role === "customer") {
     // Wrong role → reject
