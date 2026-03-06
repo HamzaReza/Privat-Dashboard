@@ -612,6 +612,26 @@ function GoogleCompleteForm() {
         return;
       }
 
+      // Notify admin about the new pending provider (fire-and-forget)
+      if (accessToken && session?.user) {
+        fetch("/api/notify-admin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            userId: session.user.id,
+            providerName: profile.name.trim(),
+            providerEmail: session.user.email ?? "",
+            businessName: profile.businessName.trim(),
+            phone: profile.phone.trim(),
+            serviceArea: services.serviceArea.trim(),
+            event: "registration",
+          }),
+        }).catch(() => {});
+      }
+
       await supabase.auth.signOut();
       router.replace("/login?role=provider&registered=1");
     } catch (err) {

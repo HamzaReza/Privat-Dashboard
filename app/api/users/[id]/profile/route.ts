@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 import { invalidateUsersCache } from "@/app/api/users/route";
+import { sendAdminProviderNotification } from "@/lib/email";
 
 export async function PATCH(
   request: Request,
@@ -89,6 +90,19 @@ export async function PATCH(
     if (updateError) throw updateError;
 
     invalidateUsersCache();
+
+    if (businessFieldsChanged) {
+      sendAdminProviderNotification({
+        providerName: (updatedMeta.full_name ?? updatedMeta.name ?? "Unknown") as string,
+        providerEmail: userData.user.email ?? "",
+        businessName: (updatedMeta.businessName ?? "—") as string,
+        phone: (updatedMeta.phone ?? "—") as string,
+        serviceArea: (updatedMeta.serviceArea ?? "—") as string,
+        userId: id,
+        event: "profile_update",
+      }).catch((err) => console.error("[notify-admin] profile_update email failed:", err));
+    }
+
     return NextResponse.json({ ok: true, statusChanged: businessFieldsChanged });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Internal error";

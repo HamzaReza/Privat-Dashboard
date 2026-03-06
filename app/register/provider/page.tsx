@@ -581,7 +581,7 @@ export default function ProviderRegisterPage() {
     try {
       const supabase = createClient();
 
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: creds.email.trim().toLowerCase(),
         password: creds.password,
         options: {
@@ -612,6 +612,29 @@ export default function ProviderRegisterPage() {
           setError(signUpError.message);
         }
         return;
+      }
+
+      // Notify admin about the new pending provider (fire-and-forget)
+      if (signUpData?.user) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          fetch("/api/notify-admin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              userId: signUpData.user.id,
+              providerName: profile.name.trim(),
+              providerEmail: creds.email.trim().toLowerCase(),
+              businessName: profile.businessName.trim(),
+              phone: profile.phone.trim(),
+              serviceArea: services.serviceArea.trim(),
+              event: "registration",
+            }),
+          }).catch(() => {});
+        }
       }
 
       // Store files as base64 in sessionStorage for upload after verification
