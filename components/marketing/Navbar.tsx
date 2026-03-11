@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
@@ -22,7 +23,14 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[hsl(var(--border-hsl))/0.5] bg-[hsl(var(--background-hsl))/0.9] backdrop-blur-md">
       <div className="w-full flex h-20 items-center justify-between px-6">
         <Link href="/" className="flex items-center">
-          <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-8 w-auto" />
+          <Image
+            src="/privat-logo-rect.png"
+            alt="PRIVAT"
+            width={240}
+            height={48}
+            className="h-8 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop */}

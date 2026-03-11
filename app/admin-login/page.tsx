@@ -20,35 +20,11 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [checkingSession, setCheckingSession] = useState(true);
-
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const supabase = createClient();
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (session?.user) {
-          const role =
-            session.user.user_metadata?.role || session.user.app_metadata?.role;
-
-          if (role === "admin") {
-            router.replace("/admin-dashboard");
-            return;
-          }
-          await supabase.auth.signOut();
-        }
-      } catch {
-        // ignore
-      } finally {
-        setCheckingSession(false);
-      }
-    };
-
-    checkSession();
-  }, [router]);
+    // Always sign out any existing session so the form is always shown fresh
+    const supabase = createClient();
+    supabase.auth.signOut().catch(() => {});
+  }, []);
 
   const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,16 +65,6 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
-  if (checkingSession) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <div className="relative w-8 h-8">
-          <div className="absolute inset-0 rounded-full border-2 border-[var(--primary)]/20 border-t-[var(--primary)] animate-spin" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4 relative overflow-hidden">

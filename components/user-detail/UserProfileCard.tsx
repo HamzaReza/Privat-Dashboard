@@ -1,4 +1,5 @@
 import { RiEditLine, RiShieldLine, RiUserLine } from "react-icons/ri";
+import Image from "next/image";
 
 interface UserProfileCardProps {
   user: {
@@ -39,10 +40,11 @@ export function UserProfileCard({
           style={{ boxShadow: "0 0 0 4px rgba(212,175,55,0.1)" }}
         >
           {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={avatarUrl}
               alt={fullName}
+              width={64}
+              height={64}
               className="w-full h-full object-cover"
             />
           ) : (

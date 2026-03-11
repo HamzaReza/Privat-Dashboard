@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { UsersTab } from "@/components/dashboard/UsersTab";
@@ -88,7 +89,14 @@ export default function DashboardPage() {
       <header className="sticky top-0 z-40 bg-[hsl(var(--background-hsl))/0.85] backdrop-blur-xl">
         <div className="w-full px-6 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-7 w-auto" />
+            <Image
+              src="/privat-logo-rect.png"
+              alt="PRIVAT"
+              width={210}
+              height={42}
+              className="h-7 w-auto"
+              priority
+            />
           </Link>
 
           <div className="flex items-center gap-3">

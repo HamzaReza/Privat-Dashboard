@@ -12,6 +12,7 @@ import {
   RiUserLine,
 } from "react-icons/ri";
 import { ServiceAreaMapPicker } from "./ServiceAreaMapPicker";
+import Image from "next/image";
 
 // ── Validation (matches mobile app rules) ──────────────────────────────────────
 
@@ -381,10 +382,11 @@ export function EditProfileModal({
               onClick={() => fileInputRef.current?.click()}
             >
               {avatarPreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={avatarPreview}
                   alt="Avatar preview"
+                  width={80}
+                  height={80}
                   className="w-full h-full object-cover"
                 />
               ) : (

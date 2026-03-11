@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { SectionWrapper, SectionHeading, GoldDivider } from "@/components/marketing/SectionElements";
 import { Shield, Zap, Bell, Star, Lock, ArrowRight, Quote, Smartphone } from "lucide-react";
 import { useState } from "react";
@@ -177,17 +178,21 @@ const DownloadApp = () => (
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
         <a href="#" className="transition-opacity hover:opacity-80">
-          <img
+          <Image
             src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
             alt="Download on the App Store"
-            className="h-12"
+            width={180}
+            height={40}
+            className="h-12 w-auto"
           />
         </a>
         <a href="#" className="transition-opacity hover:opacity-80">
-          <img
+          <Image
             src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
             alt="Get it on Google Play"
-            className="h-12"
+            width={180}
+            height={40}
+            className="h-12 w-auto"
           />
         </a>
       </div>

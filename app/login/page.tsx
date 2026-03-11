@@ -59,7 +59,6 @@ function SignInForm() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [checkingSession, setCheckingSession] = useState(true);
   const [loginAs, setLoginAs] = useState<"customer" | "provider">(
     searchParams.get("role") === "provider" ? "provider" : "customer",
   );
@@ -76,34 +75,10 @@ function SignInForm() {
       );
     }
 
-    const checkSession = async () => {
-      try {
-        const supabase = createClient();
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (session?.user) {
-          const role =
-            session.user.user_metadata?.role || session.user.app_metadata?.role;
-
-          if (role === "admin") {
-            router.replace("/admin-dashboard");
-            return;
-          }
-
-          router.replace(`/profile/${session.user.id}`);
-          return;
-        }
-      } catch {
-        // ignore
-      } finally {
-        setCheckingSession(false);
-      }
-    };
-
-    checkSession();
-  }, [router, searchParams]);
+    // Always sign out any existing session so the form is always shown fresh
+    const supabase = createClient();
+    supabase.auth.signOut().catch(() => {});
+  }, [searchParams]);
 
   const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -162,7 +137,6 @@ function SignInForm() {
     setError(null);
     setGoogleLoading(true);
     try {
-      console.log("🚀 ~ page.tsx:146 ~ handleGoogleSignIn ~ loginAs:", loginAs);
       localStorage.setItem("oauth_role", loginAs);
       const supabase = createClient();
       await supabase.auth.signInWithOAuth({
@@ -176,16 +150,6 @@ function SignInForm() {
       setGoogleLoading(false);
     }
   };
-
-  if (checkingSession) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <div className="relative w-8 h-8">
-          <div className="absolute inset-0 rounded-full border-2 border-[var(--primary)]/20 border-t-[var(--primary)] animate-spin" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4 relative overflow-hidden">

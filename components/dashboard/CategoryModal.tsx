@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import * as FaIcons from "react-icons/fa";
 import { ServiceCategory, CategoryFormData } from "@/types/category";
 import { RiCloseLine, RiLoader4Line, RiImageLine } from "react-icons/ri";
+import Image from "next/image";
 
 // Converts stored name (e.g. "Hammer", "hammer", "paint-roller") to react-icons key (e.g. "FaHammer", "FaPaintRoller")
 function toFaKey(name: string): string {
@@ -231,10 +232,11 @@ export function CategoryModal({
           {/* Image preview */}
           {form.image_uri && (
             <div className="rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--surface-alt)] h-32 flex items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={form.image_uri}
                 alt="Preview"
+                width={640}
+                height={256}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = "none";

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const footerLinks = [
   {
@@ -28,10 +29,19 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-3 md:items-start md:justify-items-start">
           <div className="text-left">
-            <img src="/privat-logo.png" alt="PRIVAT" className="mb-4 h-28" />
+            <Image
+              src="/privat-logo.png"
+              alt="PRIVAT"
+              width={280}
+              height={112}
+              className="mb-4 h-28 w-auto"
+              priority
+            />
             <p className="max-w-xs text-sm leading-relaxed text-[hsl(var(--muted-foreground-hsl))]">
-              PRIVAT is a premium maintenance marketplace connecting discerning customers with verified, professional service providers.
-              Premium maintenance services, delivered with discretion and professionalism.
+              PRIVAT is a premium maintenance marketplace connecting discerning
+              customers with verified, professional service providers. Premium
+              maintenance services, delivered with discretion and
+              professionalism.
             </p>
           </div>
           {footerLinks.map((group) => (
@@ -57,7 +67,7 @@ const Footer = () => {
 
         <div className="mt-16 border-t border-[hsl(var(--border-hsl))/0.3] pt-8">
           <p className="text-xs text-[hsl(var(--muted-foreground-hsl))] text-center md:text-left">
-            © 2025 MIK INTELLIGENCE FZCO. All rights reserved.
+            © 2026 MIK INTELLIGENCE FZCO. All rights reserved.
           </p>
         </div>
       </div>

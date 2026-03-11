@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { User } from "@/types/user";
+import Image from "next/image";
 import {
   RiSearchLine,
   RiLoader4Line,
@@ -454,10 +455,11 @@ export function UsersTab() {
                       <td className="px-5 py-3.5 text-[var(--text-secondary)]">
                         <div className="flex items-center gap-2">
                           {user.avatar_url && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
+                            <Image
                               src={user.avatar_url}
                               alt=""
+                              width={24}
+                              height={24}
                               className="w-6 h-6 rounded-full object-cover flex-shrink-0"
                             />
                           )}

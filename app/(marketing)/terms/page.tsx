@@ -106,9 +106,8 @@ export default function Terms() {
           </section>
 
           <section>
-            <h2 className={h2Class}>10) Refunds and Disputes (Credits)</h2>
-            <p>Refunds, if any, for Credits purchases and Lead Unlock disputes are governed by the Credits Policy and are processed in accordance with the applicable MoR/payment procedures (e.g., Paddle). Because Credits and Unlocks may be delivered and used immediately, refunds are typically limited once performance begins, subject to mandatory legal rights that cannot be waived.</p>
-            <p>Refund rules in relation to Credits apply to Providers as purchasing users. Mandatory consumer rights may apply only where a purchaser qualifies as a consumer under applicable law.</p>
+            <h2 className={h2Class}>10) Refunds</h2>
+            <p>All payments are processed by Paddle acting as Merchant of Record. Refund requests are handled by Paddle in accordance with their <a href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" rel="noopener noreferrer" className="text-[hsl(var(--primary-hsl))] hover:underline">Checkout Buyer Terms</a>. To request a refund, contact us at <a href="mailto:mik.intelligence@gmail.com" className="text-[hsl(var(--primary-hsl))] hover:underline">mik.intelligence@gmail.com</a> or use the refund link in your Paddle receipt email. Nothing in these Terms limits rights you may have under applicable mandatory consumer protection laws.</p>
           </section>
 
           <section>

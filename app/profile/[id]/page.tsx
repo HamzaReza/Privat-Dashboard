@@ -11,6 +11,7 @@ import { Job, JobWithQuotes } from "@/types/job";
 import { UserDetailsResponse } from "@/types/user";
 import { Session } from "@supabase/supabase-js";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -228,7 +229,14 @@ export default function ProfilePage() {
       <header className="sticky top-0 z-40 bg-[hsl(var(--background-hsl))/0.85] backdrop-blur-xl">
         <div className="w-full px-6 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-7 w-auto" />
+            <Image
+              src="/privat-logo-rect.png"
+              alt="PRIVAT"
+              width={210}
+              height={42}
+              className="h-7 w-auto"
+              priority
+            />
           </Link>
           <button
             onClick={handleSignOut}

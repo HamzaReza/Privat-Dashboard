@@ -179,8 +179,13 @@ export default function CustomerRegisterPage() {
                   className="relative w-20 h-20 rounded-full border-2 border-dashed border-[var(--border)] hover:border-[var(--primary)]/60 bg-[var(--surface-alt)] flex items-center justify-center overflow-hidden transition-colors cursor-pointer group"
                 >
                   {profilePreview ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={profilePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <Image
+                      src={profilePreview}
+                      alt="Preview"
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="flex flex-col items-center gap-1">
                       <RiUploadLine size={20} className="text-[var(--text-tertiary)] group-hover:text-[var(--primary)] transition-colors" />

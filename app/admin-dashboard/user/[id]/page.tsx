@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Job, JobWithQuotes } from "@/types/job";
 import { UserDetailsResponse } from "@/types/user";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -156,10 +157,6 @@ export default function AdminUserDetailPage() {
   const isServiceProvider = role === "service_provider";
   const isCustomer = role === "customer";
   const isViewingOwnProfile = authUserId === id;
-  console.log(
-    "🚀 ~ page.tsx:159 ~ AdminUserDetailPage ~ isViewingOwnProfile:",
-    isViewingOwnProfile,
-  );
   const isCurrentUserAdmin = true;
 
   function formatDate(iso: string) {
@@ -178,7 +175,14 @@ export default function AdminUserDetailPage() {
       <header className="sticky top-0 z-40 bg-[hsl(var(--background-hsl))/0.85] backdrop-blur-xl">
         <div className="w-full px-6 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img src="/privat-logo-rect.png" alt="PRIVAT" className="h-7 w-auto" />
+            <Image
+              src="/privat-logo-rect.png"
+              alt="PRIVAT"
+              width={112}
+              height={28}
+              className="h-7 w-auto"
+              priority
+            />
           </Link>
           <button
             onClick={() => router.back()}
