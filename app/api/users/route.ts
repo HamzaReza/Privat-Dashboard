@@ -2,19 +2,12 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { User } from "@/types/user";
 
-// Cache for 2 min (export so status updates can invalidate)
-export let usersCache: { data: User[]; ts: number } | null = null;
 export function invalidateUsersCache() {
-  usersCache = null;
+  // no-op: cache removed
 }
-const CACHE_TTL = 2 * 60 * 1000;
 
 export async function GET() {
   try {
-    if (usersCache && Date.now() - usersCache.ts < CACHE_TTL) {
-      return NextResponse.json(usersCache.data);
-    }
-
     const supabase = createAdminClient();
     const users: User[] = [];
     let page = 1;
@@ -72,7 +65,6 @@ export async function GET() {
       page++;
     }
 
-    usersCache = { data: users, ts: Date.now() };
     return NextResponse.json(users);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Internal error";
