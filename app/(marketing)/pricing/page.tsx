@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { PACKAGES } from "@/constants/packages";
 import { GoldDivider } from "@/components/marketing/SectionElements";
-import { ArrowRight, Check, Zap, Clock, ShieldCheck } from "lucide-react";
+import { PACKAGES } from "@/constants/packages";
+import { ArrowRight, Check, Clock, ShieldCheck, Zap } from "lucide-react";
+import Link from "next/link";
 
 const packageMeta: Record<
   string,
@@ -78,8 +78,7 @@ export default function PricingPage() {
             Transparent Pricing
           </p>
           <h1 className="mx-auto max-w-2xl text-3xl font-heading font-semibold leading-tight tracking-widest-marketing uppercase md:text-5xl lg:text-6xl slide-up">
-            Buy credits,{" "}
-            <span className="text-gold-gradient">win jobs.</span>
+            Buy credits, <span className="text-gold-gradient">win jobs.</span>
           </h1>
           <p
             className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-[hsl(var(--muted-foreground-hsl))] fade-in lg:text-lg"
@@ -98,8 +97,7 @@ export default function PricingPage() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-xl font-heading font-semibold tracking-widest-marketing uppercase text-[hsl(var(--foreground-hsl))] md:text-2xl">
-              What is a{" "}
-              <span className="text-gold-gradient">credit?</span>
+              What is a <span className="text-gold-gradient">credit?</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[hsl(var(--muted-foreground-hsl))] lg:text-base">
               Credits are your access tokens. Each time you find a service
@@ -111,9 +109,21 @@ export default function PricingPage() {
 
           <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-3">
             {[
-              { num: "01", title: "Buy credits", desc: "Choose a pack that fits your goals and purchase credits in one payment." },
-              { num: "02", title: "Browse requests", desc: "See all open service requests in your categories — for free." },
-              { num: "03", title: "Spend & win", desc: "Use a credit to unlock full contact details, reach out, and close the deal." },
+              {
+                num: "01",
+                title: "Buy credits",
+                desc: "Choose a pack that fits your goals and purchase credits in one payment.",
+              },
+              {
+                num: "02",
+                title: "Browse requests",
+                desc: "See all open service requests in your categories — for free.",
+              },
+              {
+                num: "03",
+                title: "Spend & win",
+                desc: "Use a credit to unlock full contact details, reach out, and close the deal.",
+              },
             ].map((step) => (
               <div key={step.num} className="text-center">
                 <span className="text-3xl font-heading font-semibold text-gold-gradient">
@@ -204,7 +214,8 @@ export default function PricingPage() {
                     {/* price */}
                     <div className="mt-3">
                       <span className="text-2xl font-semibold text-[hsl(var(--foreground-hsl))]">
-                        €{pkg.price % 1 === 0 ? pkg.price : pkg.price.toFixed(2)}
+                        €
+                        {pkg.price % 1 === 0 ? pkg.price : pkg.price.toFixed(2)}
                       </span>
                       <span className="ml-2 text-xs text-[hsl(var(--muted-foreground-hsl))]">
                         one-time
@@ -315,10 +326,6 @@ export default function PricingPage() {
                 {
                   q: "What happens if I run out of credits?",
                   a: "Simply purchase another pack. Your account stays active and you can top up at any time.",
-                },
-                {
-                  q: "Are refunds available?",
-                  a: "Unused credits can be refunded within 14 days of purchase. Once a credit has been spent, it cannot be refunded.",
                 },
               ].map((faq) => (
                 <div

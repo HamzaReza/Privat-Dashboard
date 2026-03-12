@@ -23,15 +23,51 @@ interface CreditHistorySectionProps {
   creditHistory: CreditHistoryEntry[];
   onAdded: () => void;
   isViewingOwn: boolean;
+  isCurrentUserAdmin: boolean;
 }
+
+const ADMIN_GRANT_CREDITS = 500;
 
 export function CreditHistorySection({
   userId,
   creditHistory,
   onAdded,
   isViewingOwn,
+  isCurrentUserAdmin,
 }: CreditHistorySectionProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [adminGranting, setAdminGranting] = useState(false);
+  const [adminError, setAdminError] = useState<string | null>(null);
+
+  const handleAddCreditsClick = () => {
+    if (isCurrentUserAdmin) {
+      setAdminError(null);
+      setAdminGranting(true);
+      fetch(`/api/users/${userId}/credits`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          credits: ADMIN_GRANT_CREDITS,
+          packageName: "Admin grant",
+        }),
+      })
+        .then(async (res) => {
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? "Failed to add credits");
+          }
+          onAdded();
+        })
+        .catch((e) => {
+          setAdminError(e instanceof Error ? e.message : "Unknown error");
+        })
+        .finally(() => {
+          setAdminGranting(false);
+        });
+    } else {
+      setModalOpen(true);
+    }
+  };
 
   return (
     <>
@@ -52,16 +88,27 @@ export function CreditHistorySection({
                 Credit History
               </h2>
             </div>
-            {isViewingOwn && (
+            {(isViewingOwn || isCurrentUserAdmin) && (
               <button
-                onClick={() => setModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-xs font-medium transition-colors cursor-pointer"
+                onClick={handleAddCreditsClick}
+                disabled={adminGranting}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-black text-xs font-medium transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <RiAddLine size={13} />
-                Add Credits
+                {adminGranting ? (
+                  <RiLoader4Line className="animate-spin" size={13} />
+                ) : (
+                  <RiAddLine size={13} />
+                )}
+                {adminGranting ? "Adding…" : "Add Credits"}
               </button>
             )}
           </div>
+
+          {adminError && (
+            <p className="mb-4 text-sm text-[var(--error)] bg-[var(--error-bg)] border border-[var(--error)]/20 rounded-xl px-4 py-3">
+              {adminError}
+            </p>
+          )}
 
           {creditHistory.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 gap-2 text-[var(--text-tertiary)]">

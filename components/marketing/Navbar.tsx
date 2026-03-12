@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const navLinks = [
-  { label: "Home", href: "/" },
   { label: "For Customers", href: "/for-customers" },
   { label: "For Providers", href: "/for-providers" },
   { label: "Pricing", href: "/pricing" },
@@ -28,7 +27,7 @@ const Navbar = () => {
             alt="PRIVAT"
             width={240}
             height={48}
-            className="h-8 w-auto"
+            className="h-5 w-auto sm:h-6 md:h-7 lg:h-8"
             priority
           />
         </Link>

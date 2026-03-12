@@ -13,7 +13,7 @@ export default function Terms() {
           <h1 className="text-3xl font-heading font-semibold tracking-widest-marketing uppercase md:text-4xl">
             <span className="text-gold-gradient">Terms of Service</span>
           </h1>
-          <p className={`mt-4 text-sm ${muted}`}>Last updated: 26 February 2026</p>
+          <p className={`mt-4 text-sm ${muted}`}>Last updated: 8 March 2026</p>
         </div>
       </section>
       <SectionWrapper className="pt-10 pb-16 lg:pt-12 lg:pb-20">
@@ -48,8 +48,8 @@ export default function Terms() {
           </section>
 
           <section>
-            <h2 className={h2Class}>3) Platform Role — Marketplace Disclaimer</h2>
-            <p>The Platform is a marketplace that facilitates connections between Customers and independent Providers. We are not a party to any agreement, contract, or dispute between Customers and Providers, unless expressly stated otherwise in writing.</p>
+            <h2 className={h2Class}>3) Platform Role — Service Request Platform Disclaimer</h2>
+            <p>The Platform is a software platform that facilitates connections between Customers and independent Providers. We are not a party to any agreement, contract, or dispute between Customers and Providers, unless expressly stated otherwise in writing.</p>
             <p>Providers are independent third parties, not employees, agents, partners, or representatives of the Company. We do not control, and do not guarantee: the quality, safety, legality, or suitability of Provider services; Customer cooperation; or the outcome of any job.</p>
             <p><strong className={fg}>No fees to Customers.</strong> Customers may submit Leads and use Customer-facing features free of charge, unless expressly stated on the Platform. Only Providers may purchase Credits and pay for provider-only features (if any).</p>
             <p>The Company does not provide, perform, supervise, control, or manage any services offered by Providers. The Company does not employ Providers and does not act as contractor, subcontractor, agent, joint venture partner, or representative of any Provider. All service agreements are entered into directly between Customers and Providers, and the Company has no responsibility for the execution, quality, legality, safety, or outcome of any service.</p>
@@ -101,13 +101,17 @@ export default function Terms() {
 
           <section>
             <h2 className={h2Class}>9) Payments, Paddle as Merchant of Record, and Taxes</h2>
-            <p>Where available, Provider Credit purchases are processed by Paddle acting as the Merchant of Record. This means Paddle may handle payment processing, invoicing/receipts, charge management, and (where applicable) tax calculation/collection depending on transaction details and location.</p>
+            <p>Where available, Provider Credit purchases are processed by Paddle acting as the Merchant of Record. This means Paddle may handle payment processing, invoicing/receipts, charge management, and, where applicable, tax calculation and collection depending on transaction details and location.</p>
             <p>Taxes may apply based on the purchaser&apos;s location and status (business vs consumer) and applicable law. You agree to comply with the checkout/payment terms presented by Paddle at the time of purchase.</p>
           </section>
 
           <section>
             <h2 className={h2Class}>10) Refunds</h2>
-            <p>All payments are processed by Paddle acting as Merchant of Record. Refund requests are handled by Paddle in accordance with their <a href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" rel="noopener noreferrer" className="text-[hsl(var(--primary-hsl))] hover:underline">Checkout Buyer Terms</a>. To request a refund, contact us at <a href="mailto:mik.intelligence@gmail.com" className="text-[hsl(var(--primary-hsl))] hover:underline">mik.intelligence@gmail.com</a> or use the refund link in your Paddle receipt email. Nothing in these Terms limits rights you may have under applicable mandatory consumer protection laws.</p>
+            <p>All payments are processed by Paddle acting as Merchant of Record. This means that customers purchase the relevant digital product or service from Paddle, and Paddle is responsible for payment processing, invoicing, receipts, and refunds.</p>
+            <p>Refunds are handled by Paddle in accordance with Paddle&apos;s applicable buyer terms and policies.</p>
+            <p>If technical problems prevent or unreasonably delay delivery of the purchased digital product or service, the customer&apos;s sole remedy will be either replacement of the product or service, or a refund of the price paid, as determined by Paddle.</p>
+            <p>To request a refund or assistance with an order, you may contact us at <a href="mailto:mik.intelligence@gmail.com" className="text-[hsl(var(--primary-hsl))] hover:underline">mik.intelligence@gmail.com</a> with your order details or use the support or refund options provided in your Paddle receipt or invoice.</p>
+            <p>Nothing in these Terms limits or excludes any mandatory rights you may have under applicable consumer protection laws.</p>
           </section>
 
           <section>

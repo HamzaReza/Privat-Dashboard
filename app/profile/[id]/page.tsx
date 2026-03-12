@@ -10,8 +10,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Job, JobWithQuotes } from "@/types/job";
 import { UserDetailsResponse } from "@/types/user";
 import { Session } from "@supabase/supabase-js";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -415,6 +415,7 @@ export default function ProfilePage() {
                 setTimeout(poll, 2000);
               }}
               isViewingOwn={isViewingOwnProfile}
+              isCurrentUserAdmin={false}
             />
           </div>
         )}

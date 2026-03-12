@@ -8,8 +8,8 @@ import { UserProfileCard } from "@/components/user-detail/UserProfileCard";
 import { createClient } from "@/lib/supabase/client";
 import { Job, JobWithQuotes } from "@/types/job";
 import { UserDetailsResponse } from "@/types/user";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -273,6 +273,7 @@ export default function AdminUserDetailPage() {
             }
             onAdded={() => setRefreshTick((t) => t + 1)}
             isViewingOwn={isViewingOwnProfile}
+            isCurrentUserAdmin={isCurrentUserAdmin}
           />
         )}
 

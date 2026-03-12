@@ -21,7 +21,7 @@ export default function RefundPolicy() {
           <section className="space-y-3">
             <p>
               This Refund Policy applies to purchases made on <strong className={fg}>Privat</strong> (standardprivat.com),
-              operated by <strong className={fg}>MIK INTELLIGENCE FZCO</strong> (&quot;we&quot;, &quot;us&quot;).
+              operated by <strong className={fg}>MIK INTELLIGENCE FZCO</strong> (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;).
             </p>
             <p>
               <strong className={fg}>Legal address:</strong> Building A1, Dubai Digital Park, Dubai Silicon Oasis, Dubai, United Arab Emirates<br />
@@ -35,60 +35,57 @@ export default function RefundPolicy() {
           <section>
             <h2 className={h2Class}>1) Paddle as Merchant of Record</h2>
             <p>
-              All payments on Privat are processed by <strong className={fg}>Paddle.com</strong>, who acts as the{" "}
-              <strong className={fg}>Merchant of Record</strong> for all transactions. This means Paddle is the seller of
-              record and is responsible for processing payments, issuing receipts, and handling refund requests in
-              accordance with their{" "}
-              <a
-                href="https://www.paddle.com/legal/checkout-buyer-terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[hsl(var(--primary-hsl))] hover:underline"
-              >
-                Checkout Buyer Terms
-              </a>.
+              All payments on Privat are processed by <strong className={fg}>Paddle</strong>, which acts as the{" "}
+              <strong className={fg}>Merchant of Record</strong> for all transactions. This means that customers purchase
+              the relevant digital product or service from Paddle, and Paddle is responsible for payment processing,
+              invoicing, receipts, and refunds.
             </p>
           </section>
 
           <section>
-            <h2 className={h2Class}>2) Refund eligibility</h2>
+            <h2 className={h2Class}>2) Refunds</h2>
+            <p>Refunds are handled by Paddle in accordance with Paddle&apos;s applicable terms and policies.</p>
             <p>
-              If you are not satisfied with your purchase, you may request a refund. Refund requests are handled by
-              Paddle in accordance with their standard refund policy and applicable consumer protection laws.
+              If technical problems prevent or unreasonably delay delivery of the purchased digital product or service,
+              the customer&apos;s sole remedy will be either replacement of the product or service, or a refund of the price
+              paid, as determined by Paddle.
             </p>
-            <p className="mt-2">
-              To request a refund, you can:
-            </p>
+            <p>To request a refund or assistance with an order, customers may:</p>
             <ul className="mt-2 list-disc pl-6 space-y-1">
-              <li>
-                Contact us at{" "}
-                <a href="mailto:mik.intelligence@gmail.com" className="text-[hsl(var(--primary-hsl))] hover:underline">
-                  mik.intelligence@gmail.com
-                </a>{" "}
-                with your order details, and we will process your request promptly.
-              </li>
-              <li>
-                Use the refund link in your Paddle receipt email to submit a request directly through Paddle&apos;s support portal.
-              </li>
+              <li>Contact us at <a href="mailto:mik.intelligence@gmail.com" className="text-[hsl(var(--primary-hsl))] hover:underline">mik.intelligence@gmail.com</a> with their order details; or</li>
+              <li>Use the support or refund options provided in their Paddle receipt or invoice.</li>
             </ul>
           </section>
 
           <section>
-            <h2 className={h2Class}>3) Consumer rights</h2>
+            <h2 className={h2Class}>3) Digital Content and Right of Withdrawal</h2>
             <p>
-              Nothing in this policy limits or excludes any rights you have under applicable mandatory consumer protection
-              laws, including any statutory right to cancel or receive a refund.
+              Where the purchased product or service is digital content that is made available immediately after
+              purchase, by completing the purchase and accessing, downloading, or otherwise receiving that digital
+              content, the customer consents to immediate performance and acknowledges that any applicable right of
+              withdrawal is lost once the download or transmission has begun.
             </p>
           </section>
 
           <section>
-            <h2 className={h2Class}>4) Contact</h2>
+            <h2 className={h2Class}>4) Consumer Rights</h2>
             <p>
-              For any questions about a purchase or refund request, please contact us at{" "}
+              Nothing in this Refund Policy limits or excludes any mandatory rights that customers may have under
+              applicable consumer protection laws.
+            </p>
+          </section>
+
+          <section>
+            <h2 className={h2Class}>5) Contact</h2>
+            <p>For any questions about a purchase or refund request, please contact:</p>
+            <p>
+              <strong className={fg}>MIK INTELLIGENCE FZCO</strong>
+              <br />
+              Building A1, Dubai Digital Park, Dubai Silicon Oasis, Dubai, United Arab Emirates
+              <br />
               <a href="mailto:mik.intelligence@gmail.com" className="text-[hsl(var(--primary-hsl))] hover:underline">
                 mik.intelligence@gmail.com
-              </a>.<br />
-              <strong className={fg}>MIK INTELLIGENCE FZCO</strong> — Building A1, Dubai Digital Park, Dubai Silicon Oasis, Dubai, United Arab Emirates
+              </a>
             </p>
           </section>
         </div>
