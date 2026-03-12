@@ -65,7 +65,6 @@ function validateServiceArea(v: string): string | null {
 
 function validateCategories(cats: string[]): string | null {
   if (cats.length === 0) return "At least one category is required";
-  if (cats.length > 5) return "Maximum 5 categories allowed";
   return null;
 }
 
@@ -517,10 +516,7 @@ export function EditProfileModal({
               {/* Categories */}
               <div>
                 <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">
-                  Categories{" "}
-                  <span className="text-[var(--text-tertiary)] font-normal">
-                    (max 5)
-                  </span>
+                  Categories
                 </label>
                 {categoriesLoading ? (
                   <p className="text-xs text-[var(--text-tertiary)]">
@@ -534,15 +530,12 @@ export function EditProfileModal({
                   <div className="flex flex-wrap gap-2">
                     {allCategories.map((cat) => {
                       const selected = selectedCategories.includes(cat.id);
-                      const atMax =
-                        !selected && selectedCategories.length >= 5;
                       return (
                         <button
                           key={cat.id}
                           type="button"
-                          onClick={() => !atMax && toggleCategory(cat.id)}
-                          disabled={atMax}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                          onClick={() => toggleCategory(cat.id)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
                             selected
                               ? "bg-[var(--primary)]/15 text-[var(--primary)] border-[var(--primary)]/40"
                               : "bg-[var(--surface-alt)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--primary)]/30"
