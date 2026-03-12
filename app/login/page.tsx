@@ -121,6 +121,18 @@ function SignInForm() {
         return;
       }
 
+      const status = user?.user_metadata?.status;
+      if (loginAs === "provider" && status === "pending") {
+        await supabase.auth.signOut();
+        setError("Your account is pending approval. You'll be notified when it's approved.");
+        return;
+      }
+      if (loginAs === "provider" && status === "blocked") {
+        await supabase.auth.signOut();
+        setError("Your account has been blocked. Please contact support.");
+        return;
+      }
+
       router.replace(`/profile/${user.id}?role=${loginAs}`);
     } catch (err) {
       const message =
