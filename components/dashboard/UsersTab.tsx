@@ -460,7 +460,7 @@ export function UsersTab() {
                               className="w-6 h-6 rounded-full object-cover flex-shrink-0"
                             />
                           )}
-                          <span>{user.full_name ?? "—"}</span>
+                          <span>{user.name ?? "—"}</span>
                         </div>
                       </td>
                       <td className="px-5 py-3.5">
