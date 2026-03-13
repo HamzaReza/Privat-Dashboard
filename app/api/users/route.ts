@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { User } from "@/types/user";
+import { NextResponse } from "next/server";
 
 export function invalidateUsersCache() {
   // no-op: cache removed
@@ -22,8 +22,7 @@ export async function GET() {
       if (!data.users.length) break;
 
       for (const u of data.users) {
-        const role =
-          u.user_metadata?.role ?? u.app_metadata?.role ?? "user";
+        const role = u.user_metadata?.role ?? u.app_metadata?.role ?? "user";
         if (role === "admin") continue; // exclude admins
 
         const meta = u.user_metadata as Record<string, unknown>;
@@ -34,7 +33,8 @@ export async function GET() {
           created_at: u.created_at,
           last_sign_in_at: u.last_sign_in_at ?? undefined,
           phone: u.phone ?? undefined,
-          full_name: (meta?.full_name ?? meta?.name) as string | undefined,
+          full_name: meta?.full_name as string | undefined,
+          name: meta?.name as string | undefined,
           avatar_url: meta?.avatar_url as string | undefined,
           role,
           status: meta?.status as string | undefined,
@@ -49,7 +49,12 @@ export async function GET() {
           jobLeadsPaid: meta?.jobLeadsPaid as { jobId: string }[] | undefined,
           businessPhone: meta?.businessPhone as string | undefined,
           creditHistory: meta?.creditHistory as
-            | { type: string; amount: number; createdAt: string; description: string }[]
+            | {
+                type: string;
+                amount: number;
+                createdAt: string;
+                description: string;
+              }[]
             | undefined,
           email_verified: meta?.email_verified as boolean | undefined,
           phone_verified: meta?.phone_verified as boolean | undefined,
