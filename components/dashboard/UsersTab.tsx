@@ -1,23 +1,23 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { User } from "@/types/user";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
-  RiSearchLine,
-  RiLoader4Line,
-  RiUserLine,
-  RiRefreshLine,
-  RiArrowRightSLine,
   RiArrowLeftSLine,
   RiArrowRightDoubleLine,
+  RiArrowRightSLine,
   RiCalendarLine,
-  RiForbidLine,
   RiCheckboxCircleLine,
   RiDeleteBinLine,
+  RiForbidLine,
+  RiLoader4Line,
+  RiRefreshLine,
+  RiSearchLine,
+  RiUserLine,
 } from "react-icons/ri";
 
 const PAGE_SIZE = 10;
@@ -101,7 +101,7 @@ export function UsersTab() {
       if (q) {
         const matchSearch =
           u.email?.toLowerCase().includes(q) ||
-          u.full_name?.toLowerCase().includes(q) ||
+          u.name?.toLowerCase().includes(q) ||
           u.id.toLowerCase().includes(q) ||
           u.businessName?.toLowerCase().includes(q) ||
           u.phone?.includes(q) ||
@@ -164,10 +164,7 @@ export function UsersTab() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const handleToggleBlock = async (
-    e: React.MouseEvent,
-    user: User,
-  ) => {
+  const handleToggleBlock = async (e: React.MouseEvent, user: User) => {
     e.preventDefault();
     e.stopPropagation();
     if (user.role !== "service_provider") return;
@@ -199,7 +196,7 @@ export function UsersTab() {
     e.stopPropagation();
     if (
       !window.confirm(
-        `Delete user ${user.email ?? user.id}? This cannot be undone.`
+        `Delete user ${user.email ?? user.id}? This cannot be undone.`,
       )
     )
       return;

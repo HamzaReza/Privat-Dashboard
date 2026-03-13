@@ -16,6 +16,7 @@ export interface User {
   last_sign_in_at?: string;
   phone?: string;
   full_name?: string;
+  name?: string;
   avatar_url?: string;
   role?: string;
   referral_code?: string;
